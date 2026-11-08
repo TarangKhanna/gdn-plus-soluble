@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "Please cite the accompanying preprint using the preferred citation below."
+title: "Soluble State Tracking in Materialized Fixed-Point GDN+"
+type: software
+version: 0.3-zenodo
+date-released: "2026-11-09"
+license: MIT
+url: "https://doi.org/10.5281/zenodo.24057440"
+authors:
+  - family-names: Khanna
+    given-names: Tarang
+    affiliation: Independent Researcher
+preferred-citation:
+  type: article
+  title: "Soluble State Tracking in Materialized Fixed-Point GDN+"
+  authors:
+    - family-names: Khanna
+      given-names: Tarang
+      affiliation: Independent Researcher
+  year: 2026
+  doi: "10.5281/zenodo.24057440"
+  url: "https://doi.org/10.5281/zenodo.24057440"

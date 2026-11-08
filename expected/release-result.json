@@ -1,0 +1,46 @@
+{
+  "commands": [
+    [
+      "python3",
+      "-B",
+      "certs/rescaling.py"
+    ],
+    [
+      "python3",
+      "-B",
+      "certs/general_phase.py"
+    ],
+    [
+      "python3",
+      "-B",
+      "certs/z3_network.py"
+    ],
+    [
+      "python3",
+      "-B",
+      "certs/z3_wr_u2.py"
+    ],
+    [
+      "python3",
+      "-B",
+      "certs/sensitivity.py"
+    ],
+    [
+      "python3",
+      "-B",
+      "certs/interface_example.py"
+    ]
+  ],
+  "expected_failures": [
+    "variance p21 parameter range",
+    "fused marker invariant at [0,0]",
+    "ties-away marker stationarity"
+  ],
+  "frozen_sources_unchanged": true,
+  "platform": "Darwin",
+  "python": "3.14.4",
+  "resource_units_note": "Frozen ru_maxrss fields use host units: bytes on macOS, KiB on Linux; not compared as scientific results.",
+  "scope": "finite network certificates and bounded algebra checks; not a formal proof checker or StateBench identification",
+  "status": "PASS",
+  "wall_seconds": 14.202958667010535
+}

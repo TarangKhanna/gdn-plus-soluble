@@ -1,0 +1,5 @@
+__pycache__/
+*.py[cod]
+_verified/evidence/*
+!_verified/evidence/.gitkeep
+.DS_Store

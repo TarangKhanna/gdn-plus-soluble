@@ -1,0 +1,54 @@
+{
+  "epsilon_counterpoint": [
+    {
+      "D": 9,
+      "epsilon": "1/9",
+      "normalization_divisor": 1,
+      "root_numerator": 9
+    },
+    {
+      "D": 1008,
+      "epsilon": "1/1008",
+      "normalization_divisor": 1,
+      "root_numerator": 1008
+    },
+    {
+      "D": 7056,
+      "epsilon": "1/7056",
+      "normalization_divisor": 1,
+      "root_numerator": 7056
+    },
+    {
+      "D": 96768,
+      "epsilon": "1/96768",
+      "normalization_divisor": 1,
+      "root_numerator": 96768
+    }
+  ],
+  "epsilon_scope": "Only normalization that adds epsilon before a correctly-rounded root; not implied by sqrt_D(1)=1 alone, no floating-point claim",
+  "interpretation": "local algebraic checks, not a full-network certificate",
+  "joint_label_interface": "one token pair plus one shared pair, norm1 independent of joint alphabet cardinality; width grows",
+  "parameter_numerator": 37632,
+  "status": "PASS",
+  "tie_away_marker": {
+    "Tw": [
+      0,
+      -1,
+      0,
+      0
+    ],
+    "next": [
+      -1,
+      -2,
+      0,
+      0
+    ],
+    "not_stationary": true,
+    "w": [
+      -1,
+      -1,
+      0,
+      0
+    ]
+  }
+}

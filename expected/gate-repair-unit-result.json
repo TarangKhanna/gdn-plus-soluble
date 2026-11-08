@@ -1,0 +1,104 @@
+{
+  "D": 96768,
+  "absorbing_overflow": false,
+  "constant_alpha_beta": 1,
+  "convention": "unit",
+  "cpu_seconds": 6.3769,
+  "depth_histogram": {
+    "0": 1,
+    "1": 81,
+    "2": 2511,
+    "3": 2511
+  },
+  "edges": 413424,
+  "ff_width": 972,
+  "first_identity_output": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "frontier_exhausted": true,
+  "heads_per_layer": 2,
+  "input_alphabet": 81,
+  "layers": 7,
+  "max_parameter_numerator": 14046068736,
+  "max_pre_round_numerator": "14046068736/1",
+  "norm_calls": 22977,
+  "output_alphabet": 81,
+  "p": 64,
+  "peak_rss_bytes": 254066688,
+  "reset_inert_row": "row0 zero by induction; row1 is old reset state",
+  "reset_witnesses": [
+    {
+      "outputs": [
+        [
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "word": [
+        [
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          1,
+          1
+        ]
+      ]
+    },
+    {
+      "outputs": [
+        [
+          0,
+          0,
+          0,
+          2
+        ],
+        [
+          1,
+          1,
+          1,
+          1
+        ]
+      ],
+      "word": [
+        [
+          0,
+          0,
+          0,
+          2
+        ],
+        [
+          0,
+          0,
+          1,
+          1
+        ]
+      ]
+    }
+  ],
+  "scalar_operations": 14587365,
+  "source_hashes": {
+    "gate_repair_certificate.py": "43f8a94c655c815fa8ab01ad103d7d7ee5731f520e83c0620f4f9cdbbae5f245",
+    "independent_wreath_unit_keys.py": "d9065879209facbab1d78d4105a0192f1ac314ce49e308cde0668545a3d1b8e6"
+  },
+  "states": 5104,
+  "status": "PASS",
+  "token_dependent_gates": false,
+  "wall_seconds": 6.377689209009986,
+  "width": 672
+}

@@ -1,0 +1,23 @@
+{
+  "cases": 20450,
+  "moduli": [
+    2,
+    13
+  ],
+  "scales": [
+    1,
+    2,
+    3,
+    4,
+    36
+  ],
+  "scope": "scalar counter identity; full networks checked separately",
+  "status": "PASS",
+  "unscaled_witness": {
+    "D": 18,
+    "a": 0,
+    "m": 3,
+    "new_state": "-1/6",
+    "old_state": "1/3"
+  }
+}

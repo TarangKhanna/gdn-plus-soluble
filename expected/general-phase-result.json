@@ -1,0 +1,141 @@
+{
+  "cpu_seconds": 0.038924,
+  "phase_pairs": 818,
+  "rows": [
+    {
+      "H": 1,
+      "inductive_phase_cases": 4,
+      "m": 2,
+      "phase_pairs": 4,
+      "selector_cases": 8,
+      "unit_D": 36864,
+      "unit_width": 16,
+      "variance_denominator_witness": 3600,
+      "variance_width": 100
+    },
+    {
+      "H": 2,
+      "inductive_phase_cases": 9,
+      "m": 3,
+      "phase_pairs": 9,
+      "selector_cases": 18,
+      "unit_D": 256608,
+      "unit_width": 22,
+      "variance_denominator_witness": 1296,
+      "variance_width": 144
+    },
+    {
+      "H": 6,
+      "inductive_phase_cases": 16,
+      "m": 4,
+      "phase_pairs": 16,
+      "selector_cases": 32,
+      "unit_D": 3161088,
+      "unit_width": 28,
+      "variance_denominator_witness": 112896,
+      "variance_width": 196
+    },
+    {
+      "H": 10,
+      "inductive_phase_cases": 25,
+      "m": 5,
+      "phase_pairs": 25,
+      "selector_cases": 50,
+      "unit_D": 14810400,
+      "unit_width": 34,
+      "variance_denominator_witness": 174240000,
+      "variance_width": 256
+    },
+    {
+      "H": 19,
+      "inductive_phase_cases": 36,
+      "m": 6,
+      "phase_pairs": 36,
+      "selector_cases": 72,
+      "unit_D": 82944000,
+      "unit_width": 40,
+      "variance_denominator_witness": 1166400,
+      "variance_width": 324
+    },
+    {
+      "H": 28,
+      "inductive_phase_cases": 49,
+      "m": 7,
+      "phase_pairs": 49,
+      "selector_cases": 98,
+      "unit_D": 290770704,
+      "unit_width": 49,
+      "variance_denominator_witness": 7269267600,
+      "variance_width": 400
+    },
+    {
+      "H": 44,
+      "inductive_phase_cases": 64,
+      "m": 8,
+      "phase_pairs": 64,
+      "selector_cases": 128,
+      "unit_D": 1194393600,
+      "unit_width": 64,
+      "variance_denominator_witness": 1003622400,
+      "variance_width": 484
+    },
+    {
+      "H": 60,
+      "inductive_phase_cases": 81,
+      "m": 9,
+      "phase_pairs": 81,
+      "selector_cases": 162,
+      "unit_D": 3515541264,
+      "unit_width": 81,
+      "variance_denominator_witness": 1562462784,
+      "variance_width": 576
+    },
+    {
+      "H": 85,
+      "inductive_phase_cases": 100,
+      "m": 10,
+      "phase_pairs": 100,
+      "selector_cases": 200,
+      "unit_D": 10650240000,
+      "unit_width": 100,
+      "variance_denominator_witness": 28123290000,
+      "variance_width": 676
+    },
+    {
+      "H": 110,
+      "inductive_phase_cases": 121,
+      "m": 11,
+      "phase_pairs": 121,
+      "selector_cases": 242,
+      "unit_D": 25976413584,
+      "unit_width": 121,
+      "variance_denominator_witness": 141427140624,
+      "variance_width": 784
+    },
+    {
+      "H": 146,
+      "inductive_phase_cases": 144,
+      "m": 12,
+      "phase_pairs": 144,
+      "selector_cases": 288,
+      "unit_D": 64524128256,
+      "unit_width": 144,
+      "variance_denominator_witness": 1244678400,
+      "variance_width": 900
+    },
+    {
+      "H": 182,
+      "inductive_phase_cases": 169,
+      "m": 13,
+      "phase_pairs": 169,
+      "selector_cases": 338,
+      "unit_D": 137733023376,
+      "unit_width": 169,
+      "variance_denominator_witness": 979434832896,
+      "variance_width": 1024
+    }
+  ],
+  "scope": "finite support for stated general proof, not a substitute for induction/KR",
+  "script_sha256": "6089fde52f948967acbcb8bb8e8a6cecf3c0d1ad616d6570e4bdbbdb48bda55f",
+  "wall_seconds": 0.017280833999393508
+}

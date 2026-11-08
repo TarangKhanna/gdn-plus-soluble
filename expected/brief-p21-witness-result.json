@@ -1,0 +1,11 @@
+{
+  "absorbing_overflow": true,
+  "construction_unchanged": true,
+  "limit": 2097152,
+  "literal_task1_C5": "FAIL",
+  "overflow_witness": "('parameter', -3048192, 1, 2097152)",
+  "prior_verified_p": 24,
+  "reason": "variance marker parameters exceed p21 before any token",
+  "requested_p": 21,
+  "status": "EXPECTED_FAIL"
+}
