@@ -33,12 +33,13 @@ next input—not just sampled sequences:
 | Counters composed with resettable memory | 5,104 | 413,424 |
 
 Counts hold for each of the two normalization constructions. Tests also check
-normalization, decoding, overflow and arithmetic sensitivity.
+normalization, decoding, overflow and complete-output arithmetic sensitivity.
 [Verification details](VERIFICATION.md) explain the terminology and test scope.
 
 ## Reproduce
 
-Python 3.10+ on macOS or Linux; standard library only:
+Tested on macOS with Python 3.14.4; standard library only. Other Python
+versions and Linux have not been verified for this revision:
 
 ```sh
 python3 -B certs/run_all.py
@@ -62,9 +63,12 @@ rests on the paper's proof. The preprint is not peer reviewed.
 
 ## Provenance and citation
 
-Numerical expressions, assertions and expected results are preserved from the
-Zenodo archive. Documentation changes and source hashes are recorded in
-`ZENODO_RELEASE.json` and `PROVENANCE.json`.
+The immutable published v1 baseline is
+[`871536d6037326b5ddf222763a4c58d6e7e3f646`](https://github.com/TarangKhanna/gdn-plus-soluble/tree/871536d6037326b5ddf222763a4c58d6e7e3f646).
+This v2 preparation exposes the same constant-gate wreath construction directly
+and adds a complete-output rank-one sensitivity certificate. See
+[changes and measured outputs](RELEASE_NOTES.md). Original archived provenance
+and expected results remain intact; `PROVENANCE.json` pins current sources.
 
 Large language models contributed to the mathematical constructions,
 verification, checking and writing. The human author is responsible for the work.

@@ -215,11 +215,14 @@ def cyclic(fp,labels,m,increment,target,outlabels):
 def prefix(fp,labels):
     outlabels=tuple((f,B,p,n) for f in product(range(3),repeat=3) for B in range(2) for p in range(2) for n in range(3))
     index={t:i for i,t in enumerate(outlabels)}
-    # Literal unit k=q=e1 for every token, alpha=1, beta=0 on id.
-    beta=projection(fp,labels,[[D*int(t[0][3]!=0)] for t in labels])
+    # Constant alpha=beta=1. Identity writes only inert row 0; row 1
+    # retains the previous reset state. Reset tokens overwrite row 1.
+    keys=[[D*int(t[0][3]==0),D*int(t[0][3]!=0)] for t in labels]
+    queries=[[0,D] for _ in labels]
     values=[[D*int(t[0][3]==n) for n in (1,2)] for t in labels]
-    main=Head(fp,constant_rows(fp,[D]),constant_rows(fp,[D]),projection(fp,labels,values),beta)
-    comp=overwrite_head(fp,labels,[[D] for t in labels])
+    main=Head(fp,projection(fp,labels,keys),projection(fp,labels,queries),projection(fp,labels,values))
+    assert main.B is None
+    comp=overwrite_head(fp,labels,[[D] for _ in labels])
     O=[[] for _ in range(M)]
     O[WORK]=[(0,-D//2),(1,-D//2),(HD,D//2)]
     O[WORK+2]=[(0,D//2)];O[WORK+4]=[(1,D//2)]

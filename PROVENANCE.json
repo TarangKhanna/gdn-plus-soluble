@@ -1,7 +1,13 @@
 {
   "title": "Soluble State Tracking in Materialized Fixed-Point GDN+",
-  "version": "0.3-zenodo",
-  "frozen_first_party_sources": {
+  "version": "v2-local",
+  "independence": "Reconstructed from mathematical equations without original construction code; arms share design patterns. sim/fp.py is a re-export.",
+  "scope": "Endpoint-enabled materialized fixed-grid model; StateBench identification unestablished.",
+  "license_scope": "Code and documentation in this archive are MIT-licensed. The accompanying paper is licensed separately under CC BY 4.0.",
+  "archived_version": "0.3.0-rc1",
+  "publication_doi": "10.5281/zenodo.24057440",
+  "source_comparison": "ZENODO_RELEASE.json and ZENODO_SHA256SUMS preserve original archive provenance; published_baseline_source_hashes preserves v1 public source hashes. v2 changes are listed in RELEASE_NOTES.md. Current hashes intentionally differ for the direct constant-gate implementation and new certificate.",
+  "published_baseline_source_hashes": {
     "independent_constant_norm.py": "7f1c3634f5db0ee1ce7fea9aa8c0a5641fa464ceeac798cfaece56f75369b463",
     "independent_variance.py": "1f0721679e9e3b76d201f785e077b6e5e60a51405837401951cf2d05fb4e079f",
     "independent_wreath_unit_keys.py": "27fdc326a3022e4b40bcd8b4b176e4408fab0b27b5e852bd220257a3dc1f71d0",
@@ -13,10 +19,28 @@
     "brief_p21_witness.py": "7e9cd626ac4f8c6d4893807d831cd92bc4609e3df4ab79701cb5f7a8a094a5e2",
     "review_claim_checks.py": "1e67fc8523634a1c3034a17957ad4533e1e7665ac0a0389d4f7ea032a96ae933"
   },
-  "independence": "Reconstructed from mathematical equations without original construction code; arms share design patterns. sim/fp.py is a re-export.",
-  "scope": "Endpoint-enabled materialized fixed-grid model; StateBench identification unestablished.",
-  "license_scope": "Code and documentation in this archive are MIT-licensed. The accompanying paper is licensed separately under CC BY 4.0.",
-  "archived_version": "0.3.0-rc1",
-  "publication_doi": "10.5281/zenodo.24057440",
-  "source_comparison": "ZENODO_RELEASE.json records the original published archive, all source hashes, and docstring-only changes. Numerical expressions and assertions are unchanged."
+  "published_baseline_commit": "871536d6037326b5ddf222763a4c58d6e7e3f646",
+  "current_first_party_sources": {
+    "_verified/__init__.py": "dcacf46c875c7dd03da7c94421bfac4ec736dd5210b85bf115884573ca5cb3bc",
+    "_verified/brief_p21_witness.py": "7e9cd626ac4f8c6d4893807d831cd92bc4609e3df4ab79701cb5f7a8a094a5e2",
+    "_verified/gate_repair_certificate.py": "8bdf364eb95d0629aede2215eda98978b3ce8c8e42dc19fd9ab680c18cb06458",
+    "_verified/general_phase_check.py": "6089fde52f948967acbcb8bb8e8a6cecf3c0d1ad616d6570e4bdbbdb48bda55f",
+    "_verified/independent_constant_norm.py": "7f1c3634f5db0ee1ce7fea9aa8c0a5641fa464ceeac798cfaece56f75369b463",
+    "_verified/independent_variance.py": "1f0721679e9e3b76d201f785e077b6e5e60a51405837401951cf2d05fb4e079f",
+    "_verified/independent_wreath.py": "aaec7d4b0350d9a43771da06c430ce8db34750267fb7a611088cd5e57814c34c",
+    "_verified/independent_wreath_unit_keys.py": "7928e5f194208a6438683b0699973da5ea60a0c21a99c58a6bc93e7388529853",
+    "_verified/independent_wreath_variance.py": "059df203c3baaa73d810cdfb389088772dde6a8f71a81793f50376bd37b57d86",
+    "_verified/review_claim_checks.py": "1e67fc8523634a1c3034a17957ad4533e1e7665ac0a0389d4f7ea032a96ae933",
+    "_verified/task1_remaining_checks.py": "db056d6b4a204e3dd854e439e17ea1cca8db5885e20d01dd38fd3fbab2321446",
+    "certs/general_phase.py": "9e7c96e2cbf8d188e9159f0986cbe5acee7268c4eacf1fb46632d1bf3761702e",
+    "certs/interface_example.py": "ceb6a4caffec13b313d19f327b91e4616eac1b6cf41a8434060710d4a46eb2f2",
+    "certs/rank_one_sensitivity.py": "fecce9e9da4264fa3052ee64cdd028ce351641cb75bf39131c71f6b66f4601cf",
+    "certs/rescaling.py": "93ba571d42993de1d00f60dd69d661ef879a37d80e952e2d34250144b3395dd9",
+    "certs/run_all.py": "a18f1d396884d924516c6c1ce4141f8347e0b66f91c3eea330d39376eae43a26",
+    "certs/sensitivity.py": "f4a288bf0c23619dde1efe48c9c5a2af9b1a3f8329d2799f42adaa1b6dd4c602",
+    "certs/z3_network.py": "274a2538a48bade869cec1c5d58b2f78279071f5a8e508274958e1a3bf6d5d4d",
+    "certs/z3_wr_u2.py": "b3883e70831385f603990b04f99bbea9d14f1534e740897fd2e55492b3b0714d",
+    "sim/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sim/fp.py": "1764cdd8f931358624535f53583189e9e39b74d587daf4883d5a6b51e48f468a"
+  }
 }

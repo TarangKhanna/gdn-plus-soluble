@@ -25,10 +25,10 @@ def main() -> None:
         raise SystemExit("Run without -O: the certificates require invariant assertions.")
     started = time.monotonic()
     provenance = json.loads((ROOT / "PROVENANCE.json").read_text())
-    for name, expected in provenance["frozen_first_party_sources"].items():
-        assert hashlib.sha256((ROOT / "_verified" / name).read_bytes()).hexdigest() == expected, name
+    for name, expected in provenance["current_first_party_sources"].items():
+        assert hashlib.sha256((ROOT / name).read_bytes()).hexdigest() == expected, name
     commands = []
-    for name in ("rescaling.py", "general_phase.py", "z3_network.py", "z3_wr_u2.py", "sensitivity.py", "interface_example.py"):
+    for name in ("rescaling.py", "general_phase.py", "z3_network.py", "z3_wr_u2.py", "sensitivity.py", "rank_one_sensitivity.py", "interface_example.py"):
         command = [sys.executable, "-B", str(ROOT / "certs" / name)]
         subprocess.run(command, cwd=ROOT, check=True)
         commands.append(["python3", "-B", "certs/" + name])
@@ -52,6 +52,10 @@ def main() -> None:
         assert wreath["status"] == "PASS" and not wreath["absorbing_overflow"]
         assert (wreath["states"], wreath["edges"], wreath["norm_calls"]) == (5104, 413424, 22977)
         assert wreath["constant_alpha_beta"] == 1 and not wreath["token_dependent_gates"]
+    rank_one = load("rank-one-sensitivity-result.json")
+    assert rank_one["status"] == "PASS" and rank_one["reported_witness_reproduced"]
+    assert rank_one["complete_network_runs"] == 12 and len(rank_one["cases"]) == 6
+    assert all(c["complete_output_differs"] for c in rank_one["cases"])
     assert load("interface-example-result.json")["status"] == "PASS"
     assert load("rescaling-result.json")["cases"] == 20450
     assert load("general-phase-result.json")["phase_pairs"] == 818
@@ -60,7 +64,7 @@ def main() -> None:
     result = {"status": "PASS", "python": platform.python_version(), "platform": platform.system(),
               "resource_units_note": "Frozen ru_maxrss fields use host units: bytes on macOS, KiB on Linux; not compared as scientific results.",
               "commands": commands, "wall_seconds": time.monotonic() - started,
-              "frozen_sources_unchanged": True,
+              "current_sources_match_provenance": True,
               "expected_failures": ["variance p21 parameter range", "fused marker invariant at [0,0]", "ties-away marker stationarity"],
               "scope": "finite network certificates and bounded algebra checks; not a formal proof checker or StateBench identification"}
     (ROOT / "_verified/evidence/release-result.json").write_text(json.dumps(result, indent=2) + "\n")
