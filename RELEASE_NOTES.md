@@ -1,5 +1,9 @@
 # v2 publication candidate
 
+Final review corrections narrow the abstract to the reported rounded rank-one
+sensitivity and fix the bracketed Nowak citation. Versioned PDF pinpoint checks
+are recorded in `paper/CITATION_VERIFICATION.txt`. Numerical Python is unchanged.
+
 The `paper/` directory adds the revised manuscript, PDF, source package and
 Appendix D coverage audit. Numerical Python sources are unchanged from
 `b4c080f9115598af59d0e0543ee7fbb704283e08`; the final clean suite passed all seven entry points.

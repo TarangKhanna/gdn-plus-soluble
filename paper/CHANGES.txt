@@ -38,3 +38,12 @@ Final candidate refinements after independent reviews:
   delay, wreath composition and padding; full inventory in APPENDIX_D_COVERAGE.txt.
 - Correct Grazzi author order and add the existing Nowak classical KR anchor.
 - No further Python or numerical-code change was necessary.
+
+Final independent-review corrections (relative to ca2205e):
+- Abstract now reports only the tested rounded rank-one sensitivity; removed
+  the unsupported floating-point-failure wording. No new experiment claimed.
+- Appendix C.3 Nowak citation now renders with numerical brackets.
+- Rechecked all disputed pinpoint locations against versioned primary PDFs;
+  locations recorded in CITATION_VERIFICATION.txt. No numbering changes needed.
+- Rebuilt matching PDF/source ZIP and refreshed provenance/checksums.
+- Numerical implementation and original theorem/proofs/assumptions unchanged.

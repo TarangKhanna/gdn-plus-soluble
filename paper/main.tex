@@ -70,8 +70,8 @@ token, and a parity-driven buffer supplies the exclusive prefix needed for
 wreath composition. Exhaustive certificates check complete modulo-three and
 $\Z_3\wr U_2$ networks under both normalizations; the general result follows
 by algebraic induction. The construction depends on this evaluation program:
-same-weight failures under rank-one or floating-point evaluation do not imply
-impossibility in those models.
+the tested rounded rank-one evaluator fails with unchanged weights, without
+proving impossibility for rank-one models.
 \end{abstract}
 
 \section{Introduction}
@@ -681,7 +681,7 @@ Only $\pi$ is multiplicative; the section need not be. Implement the section
 and quotient decoding with the finite recoders above, extending the decoder
 arbitrarily outside $T$. The soluble Krohn--Rhodes decomposition into cyclic
 prime groups and $U_2$ factors, as stated in StateBench Proposition~1
-(see also the classical decomposition in \citealp[Appendix~I, Theorem~I.3]{nowak}), now
+(see also the classical decomposition in \citep[Appendix~I, Theorem~I.3]{nowak}), now
 completes a structural induction. The trivial factor is a constant recoder.
 
 \section{A common datatype and all-length bounds}\label{app:datatype}

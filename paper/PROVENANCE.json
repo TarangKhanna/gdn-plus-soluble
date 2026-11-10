@@ -9,10 +9,12 @@
   "verified_code_commit": "b4c080f9115598af59d0e0543ee7fbb704283e08",
   "verified_code_tree": "f52558b5aef8bfc0495fdb1eef855709d68fc7f2",
   "code_archive_sha256": "7da661df75db1748f7bc5e13fc72f51a08f547630ee092b7564712f5ccfe4948",
-  "main_tex_sha256": "29492842fc8321baf0168af81eda9024f05621619658d5f4933518a42d47373a",
-  "pdf_sha256": "25350a72a8576030cca9876bc689d6d6bfcfe560a1ebd0e7b14feaf711faf716",
+  "main_tex_sha256": "ec93ea4276bd46d979190d8eb19cbaf883c0ceca5614c1978330b58033559d70",
+  "pdf_sha256": "7ddbeece08b35095ce370246be9635131ec8a9f251229747d1440ec82503635e",
   "code_files_unchanged": true,
   "source_origin": "Original LaTeX source, not reconstructed from PDF",
   "public_availability": "Owner authorized candidate branch push; code snapshot fixed by the included export and immutable verification commit. No new Zenodo publication or release tag is claimed.",
-  "publication_candidate_branch": "v2-publication-candidate"
+  "publication_candidate_branch": "v2-publication-candidate",
+  "candidate_parent_commit": "ca2205e7b0d59c758c7a295f6db77c3897066c52",
+  "citation_verification": "CITATION_VERIFICATION.txt"
 }
