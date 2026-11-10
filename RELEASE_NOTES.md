@@ -1,4 +1,8 @@
-# v2 preparation (local, unpublished)
+# v2 publication candidate
+
+The `paper/` directory adds the revised manuscript, PDF, source package and
+Appendix D coverage audit. Numerical Python sources are unchanged from
+`b4c080f9115598af59d0e0543ee7fbb704283e08`; the final clean suite passed all seven entry points.
 
 Based on immutable published commit `871536d6037326b5ddf222763a4c58d6e7e3f646`.
 The published `v0.3-zenodo` tag and all original expected outputs and archived

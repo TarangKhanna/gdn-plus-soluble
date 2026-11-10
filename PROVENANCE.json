@@ -1,6 +1,6 @@
 {
   "title": "Soluble State Tracking in Materialized Fixed-Point GDN+",
-  "version": "v2-local",
+  "version": "v2-publication-candidate",
   "independence": "Reconstructed from mathematical equations without original construction code; arms share design patterns. sim/fp.py is a re-export.",
   "scope": "Endpoint-enabled materialized fixed-grid model; StateBench identification unestablished.",
   "license_scope": "Code and documentation in this archive are MIT-licensed. The accompanying paper is licensed separately under CC BY 4.0.",
@@ -42,5 +42,7 @@
     "certs/z3_wr_u2.py": "b3883e70831385f603990b04f99bbea9d14f1534e740897fd2e55492b3b0714d",
     "sim/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "sim/fp.py": "1764cdd8f931358624535f53583189e9e39b74d587daf4883d5a6b51e48f468a"
-  }
+  },
+  "verification_implementation_commit": "b4c080f9115598af59d0e0543ee7fbb704283e08",
+  "paper_provenance": "paper/PROVENANCE.json"
 }

@@ -1,0 +1,766 @@
+\documentclass[10pt]{article}
+\ifdefined\TMLRSubmission
+\usepackage{tmlr}
+\else
+\usepackage[margin=1in]{geometry}
+\usepackage[numbers,square]{natbib}
+\fi
+\usepackage{amsmath,amssymb,amsthm,booktabs}\usepackage{lmodern}\usepackage[T1]{fontenc}
+\usepackage[hidelinks,hyperfootnotes=false]{hyperref}
+\ifdefined\TMLRSubmission
+\hypersetup{pdftitle={Soluble State Tracking in Materialized Fixed-Point GDN+},pdfauthor={},pdfsubject={Materialized fixed-point expressivity}}
+\else
+\hypersetup{pdftitle={Soluble State Tracking in Materialized Fixed-Point GDN+},pdfauthor={Tarang Khanna},pdfsubject={Materialized fixed-point expressivity}}
+\fi
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\D}{\mathbb D}
+\newcommand{\LN}{\operatorname{LN}}
+\newcommand{\relu}{\operatorname{ReLU}}
+\newcommand{\Sol}{\mathsf{Sol}}
+\newcommand{\Aprd}{\mathsf{Aprd}}
+\newcommand{\Fin}{\mathsf{Fin}}
+\newcommand{\GDNf}{\mathsf{GDN}^{+}_{f}}
+\DeclareMathOperator{\R}{R}
+
+\title{Soluble State Tracking in Materialized Fixed-Point GDN$^{+}$}
+\ifdefined\TMLRSubmission
+\author{Anonymous authors}
+\else
+\author{Tarang Khanna\\
+Independent Researcher\\
+\texttt{tarang.research@gmail.com}}
+\fi
+\date{}
+\newcommand{\paperbibitem}[2]{\bibitem[#1]{#2}}
+
+\begin{document}
+\ifdefined\TMLRSubmission
+  \maketitle
+\else
+  % Compact title for the identified preprint.
+  % The official TMLR title layout is deliberately left untouched.
+  \vspace*{-1.5em}
+  \begin{center}
+    {\Large Soluble State Tracking in Materialized Fixed-Point GDN$^{+}$\par}
+    \vspace{0.7em}
+    {\normalsize Tarang Khanna\par}
+    {\small Independent Researcher\par}
+    {\small\href{mailto:tarang.research@gmail.com}{\texttt{tarang.research@gmail.com}}\par}
+  \end{center}
+  \vspace{0.35em}
+\fi
+\begingroup\renewcommand{\thefootnote}{*}\footnotetext{Disclosure of AI assistance: large language models contributed to developing the mathematical constructions, implementing computational verification, checking mathematical arguments, and drafting this manuscript. The human author is responsible for the submitted claims and materials.}\endgroup
+
+\begin{abstract}
+Every finite soluble monoid admits a fixed-width, fixed-depth GDN$^{+}$ network
+computing nonempty prefix products in the materialized fixed-point model defined
+here, with constant gates $\alpha=\beta=1$, zero initial memory, and either of
+two specified centered normalizations. Building on StateBench's aperiodic and
+rounded-parity constructions, we supply arbitrary-modulus counters and
+full-network soluble composition. Individually rounded materialized products
+implement bounded counters. Shifted copies yield constant-norm phase codes that
+survive normalization and residual addition; bias-free ReLU selectors return
+reusable labels. A rounded zero-state marker replaces a beginning-of-sequence
+token, and a parity-driven buffer supplies the exclusive prefix needed for
+wreath composition. Exhaustive certificates check complete modulo-three and
+$\Z_3\wr U_2$ networks under both normalizations; the general result follows
+by algebraic induction. The construction depends on this evaluation program:
+same-weight failures under rank-one or floating-point evaluation do not imply
+impossibility in those models.
+\end{abstract}
+
+\section{Introduction}
+
+State tracking asks a sequence model to apply successive updates without
+losing the information needed by later ones. Finite monoid word problems
+separate immutable assignment, mutable assignment, self-reference and general
+finite-state updates. In StateBench, \citet{statebench} organize these as the
+strict hierarchy r-trivial $\subsetneq$ aperiodic $\subsetneq$ soluble
+$\subsetneq$ finite. Its Theorem~1 places fixed-precision GDN$^+$ above the
+aperiodic class, and Lemma~3 gives a rounded parity orbit. The exact placement
+relative to soluble tracking remains an open question in that paper.
+
+The issue is not only whether a recurrent head can count. Its state must pass
+through legal projections, normalization, residuals and feedforward layers,
+then supply the timing and precision interfaces needed for composition. We
+construct these interfaces in a materialized rational-grid model.
+
+\begin{theorem}[Materialized fixed-point model]\label{thm:main}
+Fix either centered normalization and the scalar operations of
+\S\ref{sec:model}, and permit constant gates $\alpha=\beta=1$ as actual
+parameters. For every finite soluble monoid $M$, there exist fixed finite
+width, depth, head count and feedforward width, integers $D,p$, and rational
+parameters in the single datatype $\D_{p,D}$ such that the zero-initialized
+network returns the product of every nonempty word over $M$. Its canonical
+output at every position encodes the inclusive prefix product. All scalar
+parameters and pre-rounding intermediate results remain in range for arbitrary
+input length. There are no biases, positional inputs or beginning-of-sequence
+token. The two normalization conventions use different constructions.
+\end{theorem}
+The theorem establishes containment of $\Sol$ in the defined model. The proof
+uses the usual Krohn--Rhodes induction; its architecture-specific content is in
+three primitives and their interfaces:
+\begin{enumerate}
+\setlength{\itemsep}{2pt}
+\item \textbf{Rescaled modular counters.} Separately rounding the $m^2$ matrix
+products implements a bounded counter for every fixed $m$. Rescaling the state
+and value makes the same integer transition available at compatible common
+ denominators (\S\ref{sec:counter}).
+\item \textbf{Normalization-exact carriers.} Shifted counter copies give a
+constant-norm phase code. Opposite shared coordinates cancel in the residual;
+a finite bias-free ReLU selector then returns a canonical label. A rounded
+zero-state marker initializes the shifts without a BOS token
+(\S\ref{sec:interface}; Figure~\ref{fig:z3}; Table~\ref{tab:example}).
+\item \textbf{Composable timing.} A parity-driven buffer exposes the previous
+lower prefix needed by a wreath product. Payload-preserving recoding and a
+single datatype close the induction (\S\ref{sec:wreath}). Delayed composition
+itself is prior work~\citep[Lemmas~18, 20]{sarrof}; the construction here realizes
+it with the stated GDN$^+$ operations.
+\end{enumerate}
+
+\section{Model and arithmetic}\label{sec:model}
+
+We specify the following operational model, following the sublayer structure
+of Definitions~9, 10 and~13 in~\citet{statebench}.  Tokens are embedded and normalized, $h^0_i=\LN(E[w_i])$. Each layer computes
+\[
+\hat h=\LN(h),\qquad
+g=h+\LN\!\big(O\cdot \mathrm{head}(\hat h)\big),\qquad
+h'=g+W_2\,\relu(W_1\LN(g)),
+\]
+Here $\mathrm{head}$ denotes the concatenated outputs of a fixed finite
+number of heads. Queries, keys and values are linear in $\hat h$, with no biases. The feedforward write is not normalized (Definition~10). A GDN head with one value column block maintains
+\[
+A_t=I-\beta_t k_tk_t^\top,\qquad S_t=\alpha_t A_tS_{t-1}+\beta_t k_tv_t^\top,\qquad o_t=S_t^\top q_t,
+\]
+with $S_0=0$. Throughout we permit constant $\alpha_t=\beta_t=1$; with unit keys the
+unrounded $A_t$ is a positive-semidefinite projector. This does not assert a
+spectral property of the rounded nonlinear transition map. The final output is $\arg\max h^d_nU$.
+
+\paragraph{Arithmetic.} Numbers live in $\D_{p,D}=\{j/D:\ j\in\Z,\ |j|\le 2^p\}\cup\{\bot\}$.
+This rational grid makes the evaluation order discussed in StateBench
+Appendix~A.4 explicit; identification with every inherited cast convention is
+not assumed. Before rounding, every scalar operation is checked against the physical
+range $[-2^p/D,2^p/D]$; overflow produces absorbing $\bot$. Sums are exact
+unless they overflow. Host integers used to evaluate rational expressions are
+not themselves values in this datatype. A product $(a/D)(b/D)$ is rounded to $\R(ab/D)/D$ with $\R(x)=\lfloor x+\tfrac12\rfloor$ (ties up). Iterated sums are evaluated left to right. Matrix products are evaluated entrywise with each scalar product rounded, and $A_t$ is materialized before $A_tS_{t-1}$ is formed. Division and square root inside layer normalization are rounded to the grid in the same way; the construction arranges that every square-root argument is exactly $1$, so only $\sqrt{1}=1$ is used.
+
+\paragraph{Normalization.}
+For width $n$, let $\bar x=n^{-1}\sum_jx_j$. We construct different networks for
+\[
+\LN_{\mathrm E}(x)=\frac{x-\bar x\mathbf1}
+ {\sqrt{\sum_j(x_j-\bar x)^2}},\qquad
+\LN_{\mathrm V}(x)=\frac{x-\bar x\mathbf1}
+ {\sqrt{n^{-1}\sum_j(x_j-\bar x)^2}}.
+\]
+There is no epsilon or affine term. A zero denominator produces $\bot$ and is
+never reached. Mean, square, root and division operations use the stated grid;
+all reached root arguments equal one. ReLU and argmax are exact on grid values.
+
+\paragraph{Relation to StateBench.}
+Definitions~9--10 fix the sublayer order used here. Definition~13 specifies closed
+gate ranges but also inherits the gate parameterization of~\citet{gdn}.
+StateBench itself uses endpoint gates in Lemmas~1b and~3, which supports an
+abstract endpoint interpretation; it does not by itself resolve the inherited
+activation/cast program. Its normalization inheritance includes a mean-zero
+Euclidean hash construction~\citep[Appendix~C]{norm}, while the complete
+fixed-grid centering/root/division path is not locally specified
+in~\citet{merrill2026,li,statebench}. Theorem~\ref{thm:main} therefore states an
+unconditional result in the explicit operational model above. Identifying it
+with StateBench requires that model's gate and normalization interpretation to
+admit the same execution. This is a specification question, distinct from
+assuming or excluding finite-logit realizability in practical implementations.
+
+\section{Rounded cyclic counters}\label{sec:counter}
+
+\begin{lemma}[Counter]\label{lem:counter}
+Let $D=Lm^2$ with $m\ge2$, $L\ge1$. Let $k$ have $m^2$ coordinates equal to $1/m$ (so $\|k\|=1$), $q=e_1$, $\alpha=\beta=1$, and let one value column hold $v=a/L$ for an integer increment $a$. If every active coordinate of the state column equals $r/(Lm)$ for an integer $r$, and the scalar intermediates are in range, then after one step every active coordinate equals $r'/(Lm)$ with
+\begin{equation}\label{eq:counter}
+r'=r+a+m\,\R(-r/m)=:c_m(r)+a,
+\end{equation}
+where $c_m(r)\in(-m/2,\,m/2]$ is the centered representative of $r\bmod m$.
+\end{lemma}
+\begin{proof}
+In numerator units the state coordinate is $mr$. The materialized $A$ has diagonal $1-1/m^2$ and off-diagonal $-1/m^2$. A diagonal product contributes $\R\big((1-1/m^2)\,mr\big)=mr+\R(-r/m)$ since $mr$ is an integer; each of the $m^2-1$ off-diagonal products contributes $\R(-r/m)$. Summing the $m^2$ already-rounded terms gives $mr+m^2\R(-r/m)$. The write $k_iv=(1/m)(a/L)$ has numerator $ma$ exactly. Dividing by $m$ returns~\eqref{eq:counter}.
+\end{proof}
+
+Iterating~\eqref{eq:counter} from $r_0$ gives $r_t\equiv r_0+\sum_{i\le t}a_i \pmod m$ with $r_t\in(-m/2,\,m/2]+a_t$, a bounded orbit whose intermediates fit a sufficiently large fixed $p$
+(Appendix~\ref{app:datatype}). This uniform-row construction differs from StateBench's two-dimensional
+parity projector. Here $m^2\mid D$, so $m=2,D=25$ is not an instance.
+
+\begin{remark}[The rescaling must move the state]
+Raising $D$ to $Lm^2$ while keeping the old state $r/m$ and value $a$ breaks the orbit. At $m=3$, $D=18$, $S_i=1/3$, $a=0$: the diagonal product has numerator $\R(16\cdot6/18)=5$ and each of the eight off-diagonal products has numerator $\R(-12/18)=-1$, so the new coordinate is $(5-8)/18=-1/6$ rather than $1/3$. The certificate checks this retained-update witness separately from the
+scaled identity; it does not claim a whole-network failure on a decoded word. The point matters because composing components forces a common denominator.
+\end{remark}
+
+\paragraph{Constant and input channels in the same head.} A value column receiving $mb/L$ overwrites its state to $b/L$ exactly: if the column previously held $b'/L$, the old grid numerator is $m^2b'$, so its diagonal and off-diagonal
+contributions are $(m^2-1)b'$ and $-b'$, totaling zero. The write has numerator
+$m^2b$, giving the new physical state $b/L$. We use this to carry the current increment $a_t/L$ and the constant $1/L$ alongside the counters, so the output projection can form arbitrary fixed rational combinations of $r_j$, $a_t$ and $1$.
+
+\paragraph{A first-position marker from the zero state.} StateBench's Lemma~3 initializes the orbit with a beginning-of-sequence value. We avoid that token. A head with $k=\tfrac16(-5,-3,-1,-1)$ (unit norm), $q=e_1$, $\alpha=\beta=1$ and two value columns $2/D$, $1/D$ has active transition $A=I-kk^\top=\tfrac1{36}\big(\begin{smallmatrix}11&-15&-5&-5\\-15&27&-3&-3\\-5&-3&35&-1\\-5&-3&-1&35\end{smallmatrix}\big)$. Writing $T$ for its rounded numerator action, direct evaluation gives, with $u=(-2,-1,0,0)$, $v=(-3,-1,0,0)$, $w=(-1,0,0,0)$: $\R(2k)=u$, $\R(k)=w$, $T(u)=T(v)=w$, $T(w)=0$. The two columns therefore follow $0\to u\to v\to v\to\cdots$ and $0\to w\to w\to\cdots$. Reading the first coordinates $\sigma_t,\gamma_t$,
+\[
+B_t:=D\sigma_t-3D\gamma_t=\mathbf 1[t=1],\qquad C_t:=-D\gamma_t=1\quad(t\ge1).
+\]
+Both are linear in the head output. The orbit uses the tie rule at $-1/2$; under ties-away-from-zero the displayed stationary orbit is not preserved.
+
+\begin{figure}[t]
+\centering
+\small
+\fbox{\begin{minipage}{0.95\linewidth}
+\centering
+\textbf{Two complete layers, width 28; indices below are zero-based}\\[3pt]
+$x_{a_t}$\ $\longrightarrow$\
+$\underbrace{\LN\ \to\ \text{marker head}\ \to\ O\ \to\ \LN
+\ \to\ {+x_{a_t}}\ \to\ \LN\ \to\ \mathrm{FF}+g}_{\text{layer 1: }S_0=0,\ B_t=\mathbf1[t=1]}$
+\ $\longrightarrow$\ $x_{(a_t,B_t)}$\\[6pt]
+$\underbrace{\LN\ \to\ \text{shifted counters}\ \to\ O\ \to\ \LN
+\ \to\ {+x_{(a_t,B_t)}}\ \to\ \LN\ \to\ \mathrm{FF}+g}_{\text{layer 2: exclusive phase }c=u_{s_{t-1}}}$
+\ $\longrightarrow$\ $x_{s_t}$\ $\stackrel{U}{\longrightarrow}$\ $s_t$\\[6pt]
+\begin{tabular}{@{}lrl@{}}
+Coordinates & Count & Layer-2 output write $y$ \\
+\hline
+$0$--$11$: six token-pair slots & 12 & zero \\
+$12$--$17$: three phase pairs & 6 & $(c_0,-c_0,c_1,-c_1,c_2,-c_2)/4$ \\
+$18$--$21$: two padding pairs & 4 & $(1,-1,1,-1)/4$ \\
+$22$--$25$: unused & 4 & zero \\
+$26$--$27$: shared pair & 2 & $(-1/2,+1/2)$ \\
+\hline
+Total & 28 & $\|y\|^2=1$, $\sum_i y_i=0$
+\end{tabular}\\[4pt]
+Input $x$ has one active token pair and shared $(+1/2,-1/2)$.\\
+In $g=x+y$, the shared pair cancels; token, phase and padding squared norms\\
+are $1/2$, $1/4$, $1/4$. The FF selector writes $x_{s_t}-g$.
+\end{minipage}}
+\caption{Coordinate-exact Euclidean implementation at $D=1008$, $L=112$,
+$p=21$. Each FF is $W_2\relu(W_1\LN(g))$ followed by its residual addition;
+its write is not normalized. In layer 1, coordinates $12$--$15$ instead hold
+the two marker-label pairs, and $16$--$25$ are zero. The FF returns a canonical
+label, clearing that workspace before layer 2 reuses it. Each layer has one
+head. The source checker verifies these slots and the worked trace in
+Table~\ref{tab:example} through the actual matrix implementation.}
+\label{fig:z3}
+\end{figure}
+
+
+
+\section{A layer-norm-exact interface}\label{sec:interface}
+
+A scalar counter readout does not by itself supply the reusable
+constant-norm interface required by the following construction. The fix is to run $m$ counters whose joint state has constant norm.
+
+\paragraph{Phase codes.} Let $u_s=\big(c_m(s+j)\big)_{j=0}^{m-1}$ for $s\in\Z_m$ and $H=\sum_j c_m(j)^2$. The $u_s$ are distinct cyclic shifts of one integer vector, with $\|u_s\|^2=H$. For $s\ne t$, Cauchy--Schwarz gives $u_s^\top u_t\le H$, and equality would force $u_s=u_t$. Thus the integer $u_s^\top u_t$ is strictly below $H$, hence at most $H-1$; equivalently $H-u_s^\top u_t=\|u_s-u_t\|^2/2\ge1$. For $m=3$: $u_0=(0,1,-1)$, $u_1=(1,-1,0)$, $u_2=(-1,0,1)$, $H=2$.
+
+First use a marker layer and a finite recoder to retain the current label
+and $B_t$. Run $m$ counter columns $j=0,\dots,m-1$ with values $v_j=(a_t+c_m(j)B_t)/L$. The marker fires once, at $t=1$, so $r_{j,1}=a_1+c_m(j)$, and thereafter each column follows~\eqref{eq:counter}. By induction,
+\begin{equation}\label{eq:phase}
+\big(r_{j,t}-a_t\big)_{j=0}^{m-1}=u_{s_{t-1}},\qquad s_t=\sum_{i\le t}a_i \bmod m,\ s_0=0.
+\end{equation}
+The head output $S_t^\top q$ thus exposes $r_{j,t}/(mL)$, $a_t/L$ and $1/L$; the output projection $O$ forms $(r_{j,t}-a_t)/(H+1)$ with integer coefficients $mL/(H+1)$ and $-L/(H+1)$ once $L$ is divisible by $H+1$.
+
+\paragraph{Canonical carrier.} For a finite label alphabet $Z$, encode label $z$ as
+\[
+x_z=\tfrac12\,(e_z,\,-e_z;\ 1,\,-1),
+\]
+a centered unit vector: $\LN_{\mathrm E}(x_z)=x_z$. Figure~\ref{fig:z3}
+and its certificate interleave each positive coordinate with its negative
+partner, a fixed permutation of the displayed block notation. Its last two coordinates are a shared constant pair; $2(x_z)_{\mathrm{shared},+}=1$ supplies every constant the projections need, and $2(x_z)_{\mathrm{token},z'}=\mathbf 1[z=z']$ supplies every label indicator. Let the sublayer write be
+\[
+y_s=\Big(\tfrac{u_s}{H+1},\ -\tfrac{u_s}{H+1};\ \tfrac{H-1}{2(H+1)},\ -\tfrac{H-1}{2(H+1)};\ -\tfrac12,\ \tfrac12\Big),
+\]
+in disjoint coordinate regions (phase pair, padding pair, shared pair). Its private part has squared norm $2H/(H+1)^2+(H-1)^2/(2(H+1)^2)=\tfrac12$, so $\|y_s\|=1$, $y_s$ is centered, and $x_z^\top y_s=-\tfrac12$ through the shared pair. Hence
+\[
+g=x_z+y_s \quad\text{satisfies}\quad \textstyle\sum_jg_j=0,\quad \|g\|^2=1+1-1=1 .
+\]
+All three normalizations in the layer, $\LN(h)$, $\LN(O\,o)$ and $\LN(g)$, receive centered unit vectors and return them unchanged; in the fixed-point implementation every mean is zero and every squared Euclidean norm is exactly $1$
+(the population variance is $1/n$), and the only root taken is $\sqrt{1}$. Normalization is executed, not bypassed.
+
+\paragraph{Decoder.} The hidden unit
+\[
+J_{s,z}(g)=\relu\Big((H+1)\,u_s^\top g_{\mathrm{phase}}+2g_{\mathrm{token},z}-2H\textstyle\sum_{z'}g_{\mathrm{token},z'}\Big)
+\]
+has pre-activation $u_s^\top u_{s_{t-1}}-H+\mathbf 1[z=z_t]$, which equals $1$ when $(s,z)=(s_{t-1},z_t)$ and is $\le0$ otherwise. The $m|Z|$ units are therefore exactly one-hot without a bias. Setting the $W_2$ column for $(s,z)$ to $x_{F(s,z)}-g(s,z)$, for any finite recoding $F$, gives $h'=g+W_2J(g)=x_{F(s_{t-1},z_t)}$. Taking $F(s,z)=(z,\,s,\,s+a(z)\bmod m)$ preserves the input label and both the exclusive and inclusive prefix, which is what composition needs. The unembedding $U_r(h)=2h_{\mathrm{token},r}$ yields one logit $1$ and the rest $0$.
+
+\paragraph{Centered unit variance.} Under $\LN_{\mathrm V}$ the fixed points are centered vectors of squared norm $n$. Uniformly scaling the Euclidean construction by $\sqrt n$ can leave no coordinate from which the tiny constants $1/D,2/D$ of the marker head are legally generated. Instead take $n=4\rho^2$, token pair $\pm1$, fixed private pairs whose squared amplitudes sum to $\rho^2-1$ and include a permanent $+1$ coordinate (a four-square decomposition supplies them), and shared pair $\pm\rho$; scale the Euclidean private write by $2\rho$ and reverse the shared pair. Use disjoint input-private and output-private coordinate regions. Then
+$\|x\|^2=\|y\|^2=\|g\|^2=n$, the selector becomes $\relu\big(\tfrac{H+1}{2\rho}u_s^\top g_{\mathrm{phase}}+g_{\mathrm{token},z}-Hg_{\mathrm{const}}\big)$ with the same integer margin, and the $+1$ coordinate generates all small constants. The concrete $m=3$ network uses $n=36$, amplitudes $(2,1,1,1,1)$, shared $\pm3$.
+
+\paragraph{Concrete $\Z_3$ network.} Two layers (marker, then phase), one head each, width $28$, feedforward width $18$, $D=1008$, $L=112$, $p=21$ for $\LN_{\mathrm E}$; width $36$, $p=24$ for $\LN_{\mathrm V}$. The variance construction needs the larger numerator range: at $p=21$,
+a parameter grid numerator $3{,}048{,}192$ exceeds $2^{21}$.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{@{}rrrlll@{}}
+\toprule
+$t$ & $a_t$ & $B_t$ & $(r_0,r_1,r_2)$ & $r_t-a_t\mathbf1=u_{s_{t-1}}$ & $s_t$ \\
+\midrule
+1 & 1 & 1 & $(1,2,0)$ & $(0,1,-1)$ & 1 \\
+2 & 1 & 0 & $(2,0,1)$ & $(1,-1,0)$ & 2 \\
+3 & 2 & 0 & $(1,2,3)$ & $(-1,0,1)$ & 1 \\
+\bottomrule
+\end{tabular}
+\caption{Complete-network trace on $(1,1,2)$. The first-position bit initializes
+the three offsets once. The phase is the exclusive prefix code; the decoded
+residue $s_t$ is inclusive. The same scalar recurrence independently gives
+$r_{j,1}=a_1+c_3(j)$ and $r_{j,t}=a_t+c_3(r_{j,t-1})$ thereafter.}
+\label{tab:example}
+\end{table}
+
+\section{Composition and the exclusive prefix}\label{sec:wreath}
+
+\paragraph{Flip-flop.} For $U_2=\{1,a,b\}$ use two state rows, $q=e_1$, key $e_0$ on the identity and $e_1$ on $a,b$, values $0,e_a,e_b$, $\alpha=\beta=1$. Row~$0$ stays zero; the identity leaves row~$1$ untouched and a reset overwrites it. With the constant channel, $O$ forms the one-hot $(1-S_a-S_b,\,S_a,\,S_b)$ including the initial identity. A separate overwrite head supplies that
+constant. The recurrent update uses only $\{0,\pm1\}$; the carrier uses the rational
+grid specified above. (StateBench's Lemma~1b uses $\beta=0$ on the identity; we use key selection instead so that every head in the network has $\alpha=\beta=1$.)
+
+\paragraph{Exclusive-prefix interface.} For $W=M\wr N$ with input letters $(f_t,n_t)$ and prefix $(F_t,N_t)$, Definition~4 of~\citet{statebench} gives
+\[
+N_t=N_{t-1}n_t,\qquad F_t(x)=F_{t-1}(x)\,f_t(xN_{t-1}).
+\]
+The upper increment depends on the lower prefix \emph{excluding} the current letter. The proof of Lemma~2 proposes a feedforward lookup from represented partial
+products. If these carry only the inclusive $N_t$, the following obstruction
+applies to that connector.
+
+\begin{proposition}
+No function of $(f_t,n_t,N_t)$ computes $f_t(xN_{t-1})$ in general. Over $\Z_3\wr U_2$, let $f(1)=f(a)=0$, $f(b)=1$ and let $0$ denote the constant-zero function. The words $(0,a)(f,a)$ and $(0,b)(f,a)$ have the same second letter and the same inclusive prefix $N_2=a$, yet the upper increments at position~2 are $f(a)=0$ and $f(b)=1$.
+\end{proposition}
+
+The displayed pair contradicts the existence of that lookup at $x=1_N$.
+It establishes a missing interface obligation for an inclusive-only proof; it does not show the lemma's depth bound is unattainable by some other construction, and we do not label the full lemma an erratum.
+
+\paragraph{Repair: a legal one-step delay.} Run a $\Z_2$ phase component on constant increment $1$ to obtain $p_t=t\bmod 2$ as a label. A buffer head with $k_t=e_{p_t}$, $q_t=e_{1-p_t}$, $v_t=e_{N_t}$, $\alpha=\beta=1$ overwrites row $p_t$ and reads row $1-p_t$, so $S_t^\top q_t=0$ at $t=1$ and $e_{N_{t-1}}$ for $t\ge2$; using a separate overwrite companion for the current $B_t$ and constant,
+adding $B_te_{1_N}$ from the marker gives $e_{N_{t-1}}$ for all $t\ge1$. All multipliers are $0$ or $1$. The decoder of \S\ref{sec:interface} then emits a canonical label carrying $(f_t,n_t,N_t,N_{t-1})$.
+
+\paragraph{Closure.} Given complete components for $M$ and $N$ that preserve any finite payload, the $W$ component computes $N_t$, delays it, and for each fixed $x\in N$ runs a copy of the $M$ component on the increment $f_t(xN_{t-1})$, which is a finite function of the current canonical label and is realized by the same projection-plus-decoder pattern. Copies run sequentially in depth, so no two normalized carriers are ever added. The depth is finite and independent of input length; no sharp depth bound
+is asserted. For a divisor $A$ of $W$ (a quotient of a submonoid $T\le W$), choose any section $\sigma:A\to T$ of the quotient map $\pi$; run the $W$ program on $\sigma(a_t)$ and decode $\pi$; multiplicativity of $\sigma$ is not needed since $\pi(\prod\sigma(a_i))=\prod a_i$. With the soluble Krohn--Rhodes decomposition into $U_2$ and cyclic-prime factors~\citep[Prop.~1, Def.~8]{statebench}, this proves Theorem~\ref{thm:main}.
+
+\paragraph{One datatype.} Fix the program, alphabets, and a common width and head count first (padding with zero heads). Choose $D$ divisible by $36$, by every factor's $m^2$, and by every carrier, projection and normalization denominator, and let $L_m=D/m^2$ with $(H_m+1)\mid L_m$. The fixed rational ordinary products are exact after clearing their
+individual denominators; $1/D$ recurrent products require the separate
+primitive audit of Appendix~\ref{app:datatype}. In particular, the only intentionally rounded products are those of Lemma~\ref{lem:counter} and the marker, whose rounded maps are independent of $D$ by construction. All state sets are finite and all scalar computations have fixed length, so a finite $p$ bounds every parameter and every pre-rounding partial result for all input lengths.
+
+\section{Exact verification}\label{sec:verify}
+
+For each concrete instance below, a certificate builds $E,Q,K,V,O,W_1,W_2,U$, executes the state matrices with the arithmetic of \S\ref{sec:model} (including the normalization primitives, which are computed, not replaced by the identity), rejects any pre-rounding grid numerator outside $[-2^p,2^p]$, and exhausts the reachable transition system from $S_0=0$. Structural zero products are omitted while preserving the order of nonzero
+products. Because the state space is finite and closed, closure certifies all
+nonempty input lengths for these concrete networks. The certificate implementations were originally written from the mathematical
+specification without reading the original construction implementation; this is independence of implementation, not of invention.
+
+\begin{center}\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+Network & Convention & Width / $D$ / $p$ & States / transitions \\
+\midrule
+$\Z_3$ (2 layers) & $\LN_{\mathrm E}$ & 28 / 1008 / 21 & 13 / 39 \\
+$\Z_3$ (2 layers) & $\LN_{\mathrm V}$ & 36 / 1008 / 24 & 13 / 39 \\
+$\Z_3\wr U_2$ (7 layers, 81 letters) & $\LN_{\mathrm E}$ & 672 / 96768 / 64 & 5{,}104 / 413{,}424 \\
+$\Z_3\wr U_2$ (7 layers, 81 letters) & $\LN_{\mathrm V}$ & 784 / 7056 / 64 & 5{,}104 / 413{,}424 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+For each $\Z_3$ arm: $390$ normalization-routine calls (including
+verifier-only canonical fixed-point checks), all with exact zero mean and exact unit norm (resp.\ variance); no overflow; all $9{,}840$ nonempty words of length $\le8$ and $200$ random words of length $500$--$5000$ decoded correctly at every prefix. Short replay checks cover $73{,}812$
+positions and long replay checks $538{,}724$ positions per arm, using seed
+$20261108$. They replay transitions already evaluated through the full
+fixed-point network; they are not extra matrix evaluations. Wreath verification
+also memoizes complete local layer transitions; all $413{,}424$ global edges
+are checked against a separately computed reference product. The maximum
+pre-rounding grid numerators are $1{,}524{,}096$ and $9{,}144{,}576$ for the
+two $\Z_3$ arms, and $14{,}046{,}068{,}736$ and $2{,}091{,}059{,}712$ for
+the respective wreath arms; all are below their displayed $2^p$ bounds. The $\Z_3\wr U_2$ certificates include both reset witnesses of \S\ref{sec:wreath} and $22{,}977$ normalization calls per arm, all exact. The general-modulus algebra of \S\ref{sec:interface} (phase identities, norm identities, selector margins) was checked for $m=2,\dots,13$ ($818$ phase pairs); the proof for general $m$ is the induction above, not the enumeration.
+
+\paragraph{Which assumptions carry the weight.}
+Re-running the $\Z_3$ certificates with ties-to-even, or with a floored square
+root, passes (every root argument is $1$). Fused-exact evaluation instead
+computes the rank-one affine recurrence with exact intermediates and one cast
+per state output. It first breaks the marker canonical invariant on $[0,0]$,
+before the final cyclic readout. Ties-away-from-zero breaks the marker orbit.
+These two negative witnesses concern intermediate invariants, not demonstrated
+incorrect final modulo answers. The passing ties-even arm shows that the
+baseline tie rule is not necessary for this particular network.
+
+\paragraph{Complete-output rank-one sensitivity.}
+A separate alternative evaluates the rank-one update with individually rounded
+products. Write $K_i,S_{ij},V_j$ for integer grid numerators and compute
+\begin{align*}
+ d_j&=\sum_{i=0}^{q-1}\R(K_iS_{ij}/D),\\
+ S'_{ij}&=\bigl(S_{ij}-\R(K_id_j/D)\bigr)+\R(K_iV_j/D).
+\end{align*}
+Here $q$ is the number of active key rows. Sums are checked left to right;
+subtraction precedes write addition. The matrix $I-kk^\top$ is not materialized.
+All other operations, normalization checks and overflow checks stay unchanged.
+This is not the fused-exact evaluator above. Complete runs from zero memory
+under both normalization constructions give the same table:
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Input word & Materialized outputs & Rounded rank-one outputs \\
+\midrule
+$[1,1]$ & $[1,2]$ & $[1,1]$ \\
+$[1,2]$ & $[1,0]$ & $[1,2]$ \\
+$[1,0]$ & $[1,1]$ & $[1,0]$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The certificate executes twelve complete network runs, with no overflow.
+The mechanism is explicit: for a uniform counter column of numerator $mr$,
+each rounded product in $k^\top S$ has numerator $r$, giving $d=m^2r$;
+the correction has numerator $mr$ and cancels the retained state exactly.
+For the marker, $\sum_i\R(k_i u_i)=3$ and $\R(3k)=u$, while
+$\sum_i\R(k_i w_i)=1$ and $\R(k)=w$. Thus the alternative repeats its
+first-position column states, reports $B_t=1$, and reinitializes the phase
+at each step. This explains the current-increment outputs in the table.
+These results concern the specified evaluators, not production kernels.
+
+\section{Discussion}
+
+\paragraph{Relation to prior results.}
+\citet[Theorem~1; Lemmas~1b--3]{statebench} supply aperiodic and
+rounded-parity baselines for GDN$^+$; their Theorem~2 gives a soluble lower bound
+for log-precision averaging hard attention. We construct arbitrary-modulus
+counters, normalized payload-preserving interfaces and complete soluble closure
+in the explicit materialized model. Our exclusive-prefix obstruction concerns
+a particular inclusive-only connector, not the attainability of the cited
+composition lemma's depth bound.
+\citet[Theorem~1; Appendix~A.4]{grazzi} prove a nonnegative-spectrum parity
+obstruction under a different exact-intermediate/casting convention. Separate
+scalar casts change the transition, so there is no contradiction under shared
+assumptions. \citet[Theorems~1--2; Appendix~B.1]{siems} obtain broad group and
+all-regular expressivity with DeltaProduct, including one update per head at
+sufficient depth, with coefficients up to $2$, abstract parameter maps and
+decoder, and task-dependent initialization or a BOS token. These results do not
+supply the present zero-state, constant-gate, individually rounded interfaces.
+\citet[Appendix~J]{nowak} provide the arithmetic-sensitive algebraic framework
+and diagonal-recurrence cases. Unsigned-integer wrap-around differs from the
+present signed fixed-grid rounding. \citet[Lemmas~18, 20]{sarrof} already
+implement previous-token access and delayed composition for SSMs. Neither
+rounding-induced periodicity, Krohn--Rhodes decomposition nor delayed composition
+is claimed as new here.
+
+NFSM \citep[Definitions~2.1--2.2]{nfsm} requires correct decoding along every
+trajectory with arbitrary per-step perturbations bounded by a positive radius.
+Our theorem concerns one deterministic rounding program, not that robustness
+guarantee. Its rounded state updates are nonlinear maps, so the affine
+robustness obstruction does not contradict this result. Complex KDA
+\citep[Theorems~3, 5; Appendix~B.4]{ckda} uses signed channel gates and extended
+delta coefficients; its constructive arithmetic uses exact datatypes, potentially
+containing algebraic irrationals. Neither those results nor ours transfer
+automatically to floating-point execution.
+
+\paragraph{Construction cost.}
+The cyclic head represents $m^2(m+2)=\Theta(m^3)$ active recurrent entries.
+Naive dense evaluation of its retained product uses
+$m^4(m+2)=\Theta(m^5)$ scalar multiplications per token:
+$m^2(m+2)$ dot products of length $m^2$. These are active-block counts, not
+minimal storage, bit complexity or full padded-network cost. Composition adds
+$|N|$ sequential upper blocks, a clock, delay and finite controllers to the
+lower block; no optimal-depth or polynomial-size bound is asserted.
+
+\paragraph{Limitations.}
+Exact StateBench identification remains open. This is an existence bound without
+an efficient-size guarantee, upper bound, empty-word result, or consequence for
+nonzero epsilon, practical kernels or trained models. Finite certificates
+validate concrete networks; the general theorem is algebraic. The inclusive-prefix
+witness does not refute Lemma~2's statement or depth bound.
+
+\paragraph{Reproducibility.}
+Repository: \url{https://github.com/TarangKhanna/gdn-plus-soluble}.
+The verification implementation is fixed at commit
+\href{https://github.com/TarangKhanna/gdn-plus-soluble/tree/b4c080f9115598af59d0e0543ee7fbb704283e08}{\nolinkurl{b4c080f9115598af59d0e0543ee7fbb704283e08}}.
+The accompanying LaTeX source package contains its exact export at
+\texttt{anc/gdn\_plus\_verification\_code.zip}; the repository's \texttt{paper/}
+directory contains this revision's PDF and source. The
+\href{https://doi.org/10.5281/zenodo.24057440}{original Zenodo preprint}
+(DOI: 10.5281/zenodo.24057440) and the
+\href{https://github.com/TarangKhanna/gdn-plus-soluble/tree/871536d6037326b5ddf222763a4c58d6e7e3f646}{immutable original code baseline}
+retain the earlier provenance. The current implementation exposes the
+constant-gate wreath construction directly and adds the complete-output
+rank-one certificate; original expected results remain unchanged.
+From a clean extraction of the code archive, run
+\texttt{python3 -B certs/run\_all.py}, without \texttt{-O}.
+The full suite passed on macOS with Python 3.14.4; no new Linux or Python 3.10
+verification is claimed. Code is standard-library only. The general theorem
+rests on the proof appendices, not the finite certificates. AI assistance in
+construction, verification, review and drafting is disclosed on the first page;
+the author retains responsibility for the claims and final revision.
+
+\begin{thebibliography}{11}\small
+\setlength{\itemsep}{0pt}
+\paperbibitem{Grazzi et al.(2025)}{grazzi} R.~Grazzi, J.~Siems, A.~Zela, J.~Franke, F.~Hutter, M.~Pontil. Unlocking state-tracking in linear RNNs through negative eigenvalues. ICLR 2025; arXiv:2411.12537v4.
+\paperbibitem{Li et al.(2026)}{li} Y.~Li, A.~Svete, A.~Sabharwal, W.~Merrill. Efficiently representing algorithms with chain-of-thought transformers. arXiv:2606.19697, 2026.
+\paperbibitem{Merrill et al.(2026)}{merrill2026} W.~Merrill, H.~Jiang, Y.~Li, A.~Lin, A.~Sabharwal. Why are linear RNNs more parallelizable? arXiv:2603.03612, 2026.
+\paperbibitem{Merrill and Sabharwal(2023)}{norm} W.~Merrill, A.~Sabharwal. The expressive power of transformers with chain of thought. arXiv:2310.07923v5.
+\paperbibitem{Nowak et al.(2026)}{nowak} F.~Nowak, R.~Cotterell, R.~Boumasmoud. An algebraic view of the expressivity of recurrent language models. ICML 2026; arXiv:2606.01765v3.
+\paperbibitem{Petty et al.(2026)}{statebench} J.~Petty, W.~Merrill, A.~Sabharwal. A fine-grained hierarchy and benchmark for state tracking in language models. arXiv:2611.03094v1, 2026.
+\paperbibitem{Sarrof et al.(2024)}{sarrof} Y.~Sarrof, Y.~Veitsman, M.~Hahn. The expressive capacity of state space models: a formal language perspective. NeurIPS 2024.
+\paperbibitem{Siems et al.(2025)}{siems} J.~Siems, T.~Carstensen, A.~Zela, F.~Hutter, M.~Pontil, R.~Grazzi. DeltaProduct: improving state-tracking in linear RNNs via Householder products. NeurIPS 2025; arXiv:2502.10297v7.
+\paperbibitem{Yang et al.(2024)}{gdn} S.~Yang, J.~Kautz, A.~Hatamizadeh. Gated delta networks: improving Mamba2 with delta rule. arXiv:2412.06464, 2024.
+\paperbibitem{Brandoit et al.(2026)}{nfsm} J.~Brandoit, A.~Fyon, T.~Braipson, T.~Clara, F.~De~Geeter, P.~Sacr\'e, D.~Ernst, G.~Drion. Length-independent state tracking under a parallel scan. \href{https://arxiv.org/abs/2609.32447v1}{arXiv:2609.32447v1}, 2026.
+\paperbibitem{Siems et al.(2026)}{ckda} J.~Siems, R.~Grazzi, K.~P\"oppel, J.~Singh, A.~Zela, T.~Carstensen, J.~Jitsev, F.~Hutter, V.~Cevher, A.~Orvieto, A.~Klein. Complex KDA: understanding and enhancing the expressivity of Kimi Delta Attention. \href{https://arxiv.org/abs/2609.24797v1}{arXiv:2609.24797v1}, 2026.
+\end{thebibliography}
+
+\appendix
+\section{Primitive constructions and exact arithmetic}\label{app:primitives}
+This appendix gives the local implementation steps used by the induction.
+A label always denotes an entire finite tuple, encoded with one active token
+pair. Enlarging the tuple alphabet enlarges width; it does not concatenate
+several independently normalized labels.
+
+\subsection{Projection and finite recoding}
+For Euclidean canonical input $x_z$, a linear map with column $2b_z$ at the
+positive token coordinate returns any prescribed rational vector $b_z$ on
+label $z$. The shared positive coordinate supplies a constant by weight twice
+that constant. After choosing the grid as below, each individual product is
+representable; no affine bias is used.
+
+A finite function $F:Z\to B$ can be computed as a complete layer. Use the
+unit-key overwrite head $k=q=e_0$, $v=(e_{F(z)},1)$, so the readout is the
+current one-hot and constant, regardless of previous memory. Let its output
+projection emit a private pair $(e_b/2,-e_b/2)$ and shared pair $(-1/2,1/2)$.
+The residual contains the input-token pair and output-private pair with the
+shared pair canceled. For each $(z,b)$, the bias-free selector
+\[
+ J_{z,b}(g)=\relu\!\left(2g_{{\rm token},z}
+       +2g_{{\rm output},b}-2\sum_{z'}g_{{\rm token},z'}\right)
+\]
+is exactly one for the actual pair and zero otherwise. Its $W_2$ column is
+$x_{G(z,b)}-g(z,b)$, where $G$ can retain any original payload together with
+$F(z)$. This is a legal finite controller, not an external runtime table.
+
+The marker uses the same output-pair geometry with $b=B_t$. Its two value
+columns are generated from the shared $+1/2$ by weights $4/D$ and $2/D$.
+For unit-variance inputs the permanent $+1$ generates them directly.
+The marker supplies $B_t$ at every position; a recoder can retain it with the
+entire incoming label. Subsequent layers can recompute or preserve it.
+
+\subsection{Cyclic initialization and boundedness}
+Let the finite label determine $a_t\in\{0,\ldots,m-1\}$. Define
+$c_m(r)=r+mR(-r/m)$. This is periodic modulo $m$, congruent to $r$, and takes
+values in $(-m/2,m/2]$. For the shifted column initialized with the marker,
+\[
+ r_{j,1}=a_1+c_m(j),\qquad
+ r_{j,t}=a_t+c_m(r_{j,t-1})\quad(t\ge2).
+\]
+Assume $r_{j,t-1}=a_{t-1}+c_m(s_{t-2}+j)$. Periodicity and congruence give
+$c_m(r_{j,t-1})=c_m(s_{t-1}+j)$, proving the claimed exclusive phase. This
+also proves that the raw integer states range over a fixed finite set,
+independent of length. At the first step the same identity holds with $s_0=0$.
+The companion columns with values $ma_t/L$ and $m/L$ supply the current input
+and constant by exact overwrite, as calculated in the main text.
+
+For completeness, the marker's row action is
+$T(z)_i=\sum_jR(A_{ij}z_j)$ in integer numerator units. Direct substitution
+in its displayed $4\times4$ matrix gives
+\[
+ R(2k)=u,\quad R(k)=w,\quad T(u)=w,\quad T(v)=w,\quad T(w)=0,
+ \qquad v=u+w.
+\]
+Thus its memory invariant is exactly the two finite column orbits given in the
+main text; the initialization correction is available at all lengths.
+
+\subsection{The concrete modulo-three Euclidean carrier}
+The generic phase carrier uses denominator $H+1$ and is convenient for the
+proof. The width-28 executable certificate uses a different, equally exact
+private geometry: $c=u_s\in\{(0,1,-1),(1,-1,0),(-1,0,1)\}$ and
+\[
+ y=\big(c/4,-c/4;1/4,-1/4;1/4,-1/4;-1/2,1/2\big).
+\]
+The first two padding pairs have total squared norm $1/4$, the phase pairs
+have squared norm $1/4$, and the shared pair has squared norm $1/2$.
+After adding the input token pair, the shared pair cancels and the residual
+again has squared norm one. The head reads $r_j/(3L),a/L,1/L$; output weights
+$3L/4,-L/4$ form $(r_j-a)/4$. Padding and shared coordinates use weights
+$\pm L/4,\pm L/2$. For label $\ell=(a,B)$ and padding coordinate $1/4$,
+\[
+ J_{s,\ell}(g)=\relu\!\left(4u_s^\top g_{\rm phase}
+             +2g_{{\rm token},\ell}-8g_{\rm pad}\right)
+\]
+is exactly the joint indicator. Its $W_2$ column is
+$x_{(s+a)\bmod3}-g_{s,\ell}$, where $g_{s,\ell}$ is the reached residual for
+that joint label. The residual addition therefore returns
+$g_{s,\ell}+(x_{(s+a)\bmod3}-g_{s,\ell})=x_{(s+a)\bmod3}$,
+clearing the phase and padding coordinates.
+All 18 hidden units are explicit and bias-free. The last unembedding is
+$U_r(h)=2h_{{\rm token},r}$, giving a unique unit logit.
+The variance certificate has its own carrier and selector constants; it is
+not obtained merely by changing the normalizer in this Euclidean network.
+
+\section{Variance-one geometry at arbitrary width}\label{app:variance}
+Fix the maximum number $K$ of joint labels and the maximum number $J$ of
+private-output coordinate slots in the finite program. Choose an integer
+$r\ge2$ so that $n=4r^2$ accommodates all token, fixed-private, output-private
+and shared slots, with these regions disjoint. By the four-square theorem,
+write $r^2-2=b_1^2+\cdots+b_4^2$. The canonical input has one active token pair
+$\pm1$ among $K$ pairs, fixed-private pairs of amplitudes
+$1,b_1,\ldots,b_4$, and shared pair $\pm r$. The first fixed pair includes a
+permanent $+1$. Its input-private squared norm is
+\[
+ 2+2(1+b_1^2+\cdots+b_4^2)=2r^2,
+\]
+and its shared squared norm is $2r^2$, giving $\|x_z\|^2=n$ and zero mean.
+Only finitely many slots are needed, while $4r^2$ can be arbitrarily large.
+
+Scale any Euclidean private write (squared norm $1/2$) by $2r$, and use the
+opposite shared pair $\mp r$. Then $\|y\|^2=n$ and $x_z^\top y=-2r^2$.
+The residual therefore has squared norm $n$, population variance one and
+zero mean. Its permanent $+1$ input coordinate survives. The normalization
+root argument is one, even though the squared Euclidean norm is $n$.
+
+For a paired one-hot private output of amplitude $r$, the selector is
+\[
+ \relu(g_{{\rm token},z}+g_{{\rm output},b}/r-g_{{\rm const}}).
+\]
+For a cyclic private output, it is
+\[
+ \relu\!\left(\frac{H+1}{2r}u_s^\top g_{\rm phase}
+                    +g_{{\rm token},z}-H g_{{\rm const}}\right).
+\]
+Both reduce to the integer-margin selectors in the Euclidean construction.
+Weights $W_2=x_{\rm target}-g$ use the actual variance-one vectors. QKV
+projections use token amplitude one; constants, however small, can use the
+permanent $+1$. All parameters are rational after fixing integer $r$.
+
+\section{Payload preservation, delay and algebraic closure}\label{app:closure}
+\subsection{Payload-preserving components}
+A component accepts a joint input label $(z,p)$, where $p$ is any finite
+payload. Lift its QKV projections to depend only on the old label $z$.
+The recurrent trajectory is unchanged. In the final conjunction selectors,
+index by the entire actual input label $(z,p)$ and the exposed finite state.
+Choose $W_2$ to return the desired output together with $(z,p)$ in one
+canonical label. This works for every primitive above. It also lifts each
+layer of a composed block: widths are chosen for the finite enlarged alphabets
+before choosing the datatype. No factorized-amplitude payload interface is
+assumed.
+
+\subsection{Flip-flop and one-step delay}
+For $U_2$ use its multiplication with $a,b$ as right-zero resets. Keys select
+an inert row on identity and the active row on either reset; all gates remain
+one. The active row is zero before any reset, then holds one of $e_a,e_b$.
+A separate overwrite companion head, $k=q=e_0,v=1$, supplies the current
+constant. The output projection forms $(1-S_a-S_b,S_a,S_b)$, including the
+identity state, and the finite recoder returns the inclusive product while
+retaining the full input payload. Companion heads are counted in the common
+finite head count, rather than assumed to be available from the reset head.
+
+After any lower block, run a cyclic-two block on constant increment one,
+preserving the current lower product and input, to expose $p_t=t\bmod2$.
+A fresh buffer head uses $k_t=e_{p_t},q_t=e_{1-p_t},v_t=e_{N_t}$. Its two
+rows are initially zero. At time $t$ the selected row is overwritten and the
+opposite row, most recently written at $t-1$, is read. Hence the readout is
+zero for $t=1$ and $e_{N_{t-1}}$ afterwards, by induction. A separate
+current-value overwrite companion $k=q=e_0,v=(1,B_t)$ supplies the constant
+and first-position correction. Form $e_{N_{t-1}}$ by adding $B_te_{1_N}$.
+The same paired carrier and recoder preserve all current and delayed labels.
+These companion channels do not rely on the buffer retaining current values.
+
+\subsection{Wreath products and divisors}
+Suppose blocks for $M$ and $N$ compute their full-alphabet prefix products and
+preserve every finite payload. Compute $N_t$, then $N_{t-1}$ as above, retaining
+the current $(f_t,n_t)$. For each fixed $x\in N$, a finite controller computes
+$f_t(xN_{t-1})$ as an input label to a fresh $M$ block. Run these $|N|$ blocks
+sequentially in depth, preserving the lower states and previously computed
+upper products. Their fresh zero memories do not interfere. By induction on
+positions, the $x$th result is
+\[
+ F_t(x)=\prod_{i=1}^t f_i(xN_{i-1}),
+\]
+which, with $N_t$, is precisely the prefix product in $M\wr N$.
+All additional components have fixed finite depth; no optimal sum-depth bound
+is required for the theorem.
+
+If $A$ is a homomorphic image of a submonoid $T\le W$, choose a set-theoretic
+section $\sigma:A\to T$ of the surjective homomorphism $\pi:T\to A$. Run the
+full-alphabet $W$ block on $\sigma(a_t)$. Every reached product lies in $T$,
+and
+\[
+ \pi\!\left(\prod_{i=1}^t\sigma(a_i)\right)=\prod_{i=1}^t a_i.
+\]
+Only $\pi$ is multiplicative; the section need not be. Implement the section
+and quotient decoding with the finite recoders above, extending the decoder
+arbitrarily outside $T$. The soluble Krohn--Rhodes decomposition into cyclic
+prime groups and $U_2$ factors, as stated in StateBench Proposition~1
+(see also the classical decomposition in \citealp[Appendix~I, Theorem~I.3]{nowak}), now
+completes a structural induction. The trivial factor is a constant recoder.
+
+\section{A common datatype and all-length bounds}\label{app:datatype}
+First fix the finite algebraic program, every joint alphabet and coordinate
+order, and a sufficiently large common width and head count. Unit carriers
+pad with zero coordinates. Variance carriers use Appendix~\ref{app:variance}.
+Choose the common width divisible by the head count and large enough
+that every head block fits its active rows and value columns (for variance
+width $4r^2$, choose $r$ a sufficiently large multiple of that count).
+Pad unused heads with unit key and zero query/value, so they have zero output
+and memory; do not normalize a dummy head in isolation. Fix feedforward width
+large enough for all finite conjunction selectors.
+
+All carriers, finite-controller targets, selector margins and normalization
+intermediates now have fixed rational values, independent of $D$. Choose $D$
+to clear every denominator of these values and their individual ordinary
+products, including coordinates divided by $n$, coordinate squares and squares
+divided by $n$. Include factors $36$ and $m^2$ for each cyclic modulus, and
+require $L_m=D/m^2$ divisible by the fixed denominator factors of its output
+coefficients. The finite list has a common multiple. Only after fixing this
+$D$ do we set the $L_m$ and instantiate the grid-dependent parameters.
+The theorem quantifies existentially over $D,p$ and those parameters; it does
+not hold them fixed while arbitrarily changing the grid. The following audit
+separates intentionally rounded operations from ordinary exact ones.
+\begin{enumerate}
+\setlength{\itemsep}{2pt}
+\item Canonical projections, finite selectors, FF writes, binary reset/buffer
+states and the norm calculations have fixed rational operands/products.
+Clearing their individual denominators makes them exact, including both mean
+and variance evaluation orders checked by the certificates.
+\item Cyclic keys and materialized transition entries are exact once $m^2\mid D$.
+State numerators are $mr$; retained products have the intentionally rounded
+numerators derived in Lemma~\ref{lem:counter}, independent of $D$.
+Their tiny writes have integer numerator $ma$. Overwrite companions cancel
+exact integer retained terms.
+\item Marker transition entries have denominator $36$, and state numerators
+belong to $\{0,u,v,w\}$. Its products with these $1/D$ states deliberately
+round, with the same numerator map at every allowed $D$. Values $1/D,2/D$
+are generated exactly from the canonical constants; clearing denominators is
+not asserted to remove the marker's intentional rounding.
+\item Output coefficients proportional to $D$ or $L_m$ multiply state values
+proportional to $1/D$, producing the already fixed rational carriers.
+Their parameter grid numerators and individual product denominators impose
+only finitely many additional divisibility conditions. There is no requirement
+that a denominator depending recursively on $D$ divide $D$.
+For example, a coefficient $\gamma D$ multiplying a state $z/D$ yields the
+fixed rational $\gamma z$. Its parameter numerator is $\gamma D^2$;
+clearing the fixed denominator of $\gamma$ suffices. Tiny marker values are
+generated from the canonical $+1/2$ (Euclidean) or permanent $+1$ (variance)
+coordinate, as in Appendix~\ref{app:primitives}; their intentional rounding
+is retained rather than eliminated.
+\end{enumerate}
+\paragraph{Coverage under composition.}
+Payload lifting replicates canonical projection columns and enlarges finite
+selector indices; it introduces only the products of case~1. Finite recoding,
+including sections, quotient decoding and the trivial factor, uses the overwrite
+head and residual-corrected FF of Appendix~\ref{app:primitives}: case~1.
+A parity clock reuses cases~2 and~4 and its marker uses case~3. Reset and delay
+heads use binary keys, queries, values and memories; their companion channels,
+first-position correction and carrier projections use cases~1 and~4.
+Wreath composition sequentially connects canonical labels and makes finitely
+many copies of these blocks; it does not multiply their memories together.
+Common-width padding adds zeros and inert unit-key heads, covered by case~1;
+variance padding uses the fixed rational geometry of Appendix~\ref{app:variance}.
+In every block, gate factors are one, centering and squared-statistic products
+are in case~1, the root argument is exactly one, and division is by one. Residual
+and dot-product sums are ordered finite additions; ReLU, coordinate selection
+and the final argmax introduce no new rounded product. This structural induction
+covers the enlarged finite alphabets before $D$ is chosen.
+
+Each primitive has a finite
+memory invariant and finite canonical input alphabet. Their sequential product
+therefore has a finite reachable set, independent of input length. At fixed
+$D$ there are finitely many parameters and finitely many exact pre-round scalar
+results and ordered partial sums in one transition. Let $B$ bound their absolute
+physical values. Choose finite $p$ with $2^p>DB$. Every transition stays inside
+the datatype range for every input length. This is an existence bound, not a
+precision-optimality or polynomial-size claim. The bound is chosen after $D$
+and includes parameters and ordered partial sums, not just final state entries.
+It provides no perturbation margin or floating-point equivalence.
+
+\end{document}

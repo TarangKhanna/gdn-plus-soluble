@@ -3,6 +3,12 @@
 Companion code for **Soluble State Tracking in Materialized Fixed-Point GDN+**,
 Tarang Khanna (2026). [Read the paper](https://zenodo.org/records/24057440).
 
+The revised publication candidate is available as a [PDF](paper/GDN_PLUS_Preprint_v2.pdf)
+and [LaTeX source package](paper/GDN_PLUS_v2_LaTeX_source.zip).
+[Revision notes](paper/CHANGES.txt) and the [arithmetic coverage audit](paper/APPENDIX_D_COVERAGE.txt)
+record the final corrections. The numerical implementation remains fixed at
+`b4c080f9115598af59d0e0543ee7fbb704283e08`.
+
 ## Why this matters
 
 AI sequence models need to maintain state as updates accumulate—for example,
