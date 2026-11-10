@@ -1,8 +1,6 @@
 
 # GDN+ State Tracking: What Can Fixed-Size Neural Memory Compute?
 
-**Independent AI research · Recurrent sequence models · State tracking · Neural-network expressivity**
-
 Can a recurrent neural network reliably maintain and update structured information over arbitrarily long sequences without increasing its memory size?
 
 This repository investigates that question for **Gated DeltaNet (GDN+)**, a recurrent neural-network architecture relevant to efficient sequence modeling.
