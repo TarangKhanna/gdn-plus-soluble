@@ -1,0 +1,37 @@
+Final pinpoint citation verification (versioned primary PDFs)
+Page numbers below are one-based PDF page numbers, matching the printed
+page numbers at the cited locations. Checked directly against the PDFs.
+
+Nowak et al., arXiv:2606.01765v3
+Appendix I, Theorem I.3 (Krohn-Rhodes): page 24.
+https://arxiv.org/pdf/2606.01765v3#page=24
+The theorem states division of a finite transformation monoid by an iterated
+wreath product of flip-flops and prime transformation groups.
+
+Grazzi et al., arXiv:2411.12537v4
+Appendix A.4 (Finite Precision): page 17.
+https://arxiv.org/pdf/2411.12537v4#page=17
+Distinguishes finite exact datatypes for positive constructions and the
+infinite-precision intermediate/cast convention used in the negative proofs.
+
+Siems et al., DeltaProduct, arXiv:2502.10297v7
+Theorems 1 and 2: page 5. Appendix B.1 (Assumptions): page 19;
+initialization/BOS discussion continues in B.1.1 on page 19.
+https://arxiv.org/pdf/2502.10297v7#page=5
+https://arxiv.org/pdf/2502.10297v7#page=19
+Theorems give symmetric-group tracking configurations and all-regular
+recognition with sufficient layers. B.1 specifies extended coefficients,
+abstract parameter maps/decoder and task-dependent initial state.
+
+Siems et al., Complex KDA, arXiv:2609.24797v1
+Theorem 3 (Single-layer finite-group expressivity): page 6.
+Theorem 5 (Multi-layer expressivity): page 7.
+https://arxiv.org/pdf/2609.24797v1#page=6
+https://arxiv.org/pdf/2609.24797v1#page=7
+The fixed-exact-datatype qualification is explicit. Theorem 5's regular-language
+extension additionally allows beta greater than 2.
+
+No pinpoint numbering inaccuracies found. Only manuscript citation correction:
+Appendix C.3 now uses bracketed numerical citep, rendering
+[5, Appendix I, Theorem I.3], rather than unbracketed citealp.
+No new references, experimental claims or DOI introduced.

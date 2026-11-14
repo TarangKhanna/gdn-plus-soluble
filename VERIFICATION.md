@@ -1,5 +1,11 @@
 # Understanding the verification results
 
+This checkout includes the published v2 numerical implementation at
+[`b4c080f9115598af59d0e0543ee7fbb704283e08`](https://github.com/TarangKhanna/gdn-plus-soluble/tree/b4c080f9115598af59d0e0543ee7fbb704283e08),
+including `certs/rank_one_sensitivity.py`. The matching manuscript is available
+as a [local PDF](paper/GDN_PLUS_Preprint_v2.pdf), [LaTeX source](paper/main.tex)
+and [Zenodo v2 archive](https://doi.org/10.5281/zenodo.24159117).
+
 ## What the task names mean
 
 **Z3 (modulo 3)** is a counter whose answer cycles through 0, 1 and 2. For example,
@@ -64,6 +70,23 @@ The insufficient variance p=21 bound is retained as an expected negative witness
 - **Arithmetic sensitivity:** changes rounding or update evaluation rules. The
   fused-exact witness fails a marker invariant; ties-away rounding breaks marker
   stationarity. Neither is claimed to demonstrate an incorrect final answer.
+- **Complete-output rank-one sensitivity:** `certs/rank_one_sensitivity.py`
+  evaluates both complete networks on three words from zero initial memory.
+  It computes `d = k^T S` using individually rounded products and left-to-right
+  checked sums, then `(S[i,j] - round(k[i]*d[j])) + round(k[i]*v[j])`,
+  subtracting before adding the write. It does not materialize `I - kk^T`.
+  All other operations and assertions stay active. This differs from fused-exact,
+  whose recurrence intermediates are exact and whose outputs are cast once.
+  Both normalization constructions reproduce the following decoded outputs:
+
+  | Input word | Materialized | Rounded rank-one |
+  |---|---|---|
+  | `[1,1]` | `[1,2]` | `[1,1]` |
+  | `[1,2]` | `[1,0]` | `[1,2]` |
+  | `[1,0]` | `[1,1]` | `[1,0]` |
+
+  These are observed complete outputs, not conclusions drawn from a failed
+  marker invariant. The certificate records 12 complete network runs.
 
 The suite includes rescaling, phase identities, complete networks, the worked
 example and sensitivity checks. Run `python3 -B certs/run_all.py` from the root.
@@ -73,14 +96,15 @@ No weights, training or network access are needed.
 
 `certs/` contains the entry points. `_verified/` contains numerical implementations;
 `sim/fp.py` re-exports their arithmetic class, rather than implementing another
-independent simulator. `expected/` preserves the published reference outputs.
+independent simulator. `expected/` preserves the published reference outputs and adds the new
+`rank-one-sensitivity-result.json` reference.
 
 Runtime, memory, Python versions, source hashes and traceback line numbers may
-vary after the documented docstring edits or across machines. Compare scientific
+vary after the documented source changes or across machines. Compare scientific
 invariants and counts, rather than requiring byte-identical generated JSON.
 `PROVENANCE.json` pins current sources. `SHA256SUMS` verifies the current checkout;
 `ZENODO_SHA256SUMS` is the original manifest for the archived ZIP only.
 
 The universal theorem, arithmetic definitions, prior-work comparison and full
-proof are in the [paper](https://doi.org/10.5281/zenodo.24057440). These certificates
+proof are in the [v2 paper](https://doi.org/10.5281/zenodo.24159117). These certificates
 are not a proof assistant, a learned-model experiment or a production-kernel test.

@@ -1,0 +1,20 @@
+{
+  "title": "Soluble State Tracking in Materialized Fixed-Point GDN+",
+  "revision": "v2",
+  "date": "2026-11-10",
+  "original_source_package": "UPLOAD_TO_ARXIV.zip",
+  "original_source_package_sha256": "9596d9c35620f63a18eee2460b17fc1f3674b3a41dd7bd6aca7e9f387c42e0b9",
+  "original_main_tex_sha256": "dc1428917e6e6e092c8846400692a4a579f884ae3c711d1972b2ca7d468fc83e",
+  "original_paper_doi": "10.5281/zenodo.24057440",
+  "verified_code_commit": "b4c080f9115598af59d0e0543ee7fbb704283e08",
+  "verified_code_tree": "f52558b5aef8bfc0495fdb1eef855709d68fc7f2",
+  "code_archive_sha256": "7da661df75db1748f7bc5e13fc72f51a08f547630ee092b7564712f5ccfe4948",
+  "main_tex_sha256": "ec93ea4276bd46d979190d8eb19cbaf883c0ceca5614c1978330b58033559d70",
+  "pdf_sha256": "7ddbeece08b35095ce370246be9635131ec8a9f251229747d1440ec82503635e",
+  "code_files_unchanged": true,
+  "source_origin": "Original LaTeX source, not reconstructed from PDF",
+  "public_availability": "Owner authorized candidate branch push; code snapshot fixed by the included export and immutable verification commit. No new Zenodo publication or release tag is claimed.",
+  "publication_candidate_branch": "v2-publication-candidate",
+  "candidate_parent_commit": "ca2205e7b0d59c758c7a295f6db77c3897066c52",
+  "citation_verification": "CITATION_VERIFICATION.txt"
+}

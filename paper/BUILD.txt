@@ -1,0 +1,27 @@
+Identified v2 preprint source
+
+Compile main.tex with pdfLaTeX (TeX Live; standard packages listed in preamble):
+
+mkdir -p build
+pdflatex -no-shell-escape -interaction=nonstopmode -halt-on-error -output-directory=build main.tex
+pdflatex -no-shell-escape -interaction=nonstopmode -halt-on-error -output-directory=build main.tex
+
+Expected PDF: build/main.pdf (12 pages). The bibliography is in main.tex;
+BibTeX and shell escape are not required. The checked build used pdfTeX
+3.141592653-2.6-1.40.29, TeX Live 2026. No package installation was needed.
+The source package targets the identified preprint; no TMLRSubmission flag is set.
+
+Code reproduction:
+Extract anc/gdn_plus_verification_code.zip into a new directory, change into it,
+and run:
+
+python3 -B certs/run_all.py
+
+Expected: exit 0 and status PASS in _verified/evidence/release-result.json.
+Do not use -O: assertions are part of the certificate suite. Tested on macOS
+Python 3.14.4. No new Linux/Python 3.10 claim is made.
+
+Exact code commit: b4c080f9115598af59d0e0543ee7fbb704283e08
+The bundled ZIP is an unmodified git archive of that commit. The publication-candidate branch retains that commit as an ancestor. The
+exported snapshot is included for reproduction without a remote checkout.
+Original v1 DOI: https://doi.org/10.5281/zenodo.24057440

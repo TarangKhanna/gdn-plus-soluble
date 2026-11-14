@@ -9,9 +9,17 @@ This repository investigates that question for **Gated DeltaNet (GDN+)**, a recu
 >
 > The result is constructive: the repository provides explicit network parameters, an exact-arithmetic simulator, and exhaustive verification of up to **413,424 state transitions** per normalization construction.
 
-**[Read the paper](https://doi.org/10.5281/zenodo.24057440)** · **[Verification details](VERIFICATION.md)** · **[Reproduce the results](#reproducing-the-results)**
+**[Read version 2.0](https://doi.org/10.5281/zenodo.24159117)** · **[PDF](paper/GDN_PLUS_Preprint_v2.pdf)** · **[LaTeX source](paper/main.tex)** · **[Verification details](VERIFICATION.md)** · **[Reproduce the results](#reproducing-the-results)**
 
 *Companion code for "Soluble State Tracking in Materialized Fixed-Point GDN+" — Tarang Khanna (2026). Research preprint, not yet peer reviewed.*
+
+This checkout includes the published **v2 verification code** and its `paper/`
+directory. Numerical sources match immutable commit
+[`b4c080f9115598af59d0e0543ee7fbb704283e08`](https://github.com/TarangKhanna/gdn-plus-soluble/tree/b4c080f9115598af59d0e0543ee7fbb704283e08),
+including the complete-output rank-one sensitivity certificate. The PDF and
+[LaTeX source package](paper/GDN_PLUS_v2_LaTeX_source.zip) are unchanged from
+[Zenodo v2](https://doi.org/10.5281/zenodo.24159117); the verification code archive
+is bundled inside that source package at `anc/gdn_plus_verification_code.zip`.
 
 ---
 
@@ -137,15 +145,24 @@ The numerical certificates verify concrete network constructions. **The general 
 
 ## Reproducing the Results
 
-**Requirements:** Python 3.10+ on macOS or Linux. Standard library only.
+**Verified environment for v2:** macOS with Python 3.14.4; standard library only.
+Other Python versions and Linux have not been verified for this revision.
 
 No model downloads, GPU, training, or network access are required.
 
-From the repository root:
+From a fresh checkout:
 
 ```bash
+git clone https://github.com/TarangKhanna/gdn-plus-soluble.git
+cd gdn-plus-soluble
 python3 -B certs/run_all.py
 ```
+
+For the immutable numerical snapshot, run
+`git checkout --detach b4c080f9115598af59d0e0543ee7fbb704283e08` before the Python
+command. That snapshot contains verification code only; its matching manuscript
+is available in Zenodo v2 or in `paper/` at publication commit
+[`d734263692dc29f77f76265198237e23ba963a9e`](https://github.com/TarangKhanna/gdn-plus-soluble/tree/d734263692dc29f77f76265198237e23ba963a9e/paper).
 
 A successful run exits with code 0 and records `"status": "PASS"` in:
 
@@ -232,6 +249,11 @@ Large language models contributed to developing mathematical constructions, impl
 
 **Tarang Khanna (2026).** *Soluble State Tracking in Materialized Fixed-Point GDN+.*
 
-[Paper and code DOI: 10.5281/zenodo.24057440](https://doi.org/10.5281/zenodo.24057440)
+[Version 2.0 paper and bundled code: 10.5281/zenodo.24159117](https://doi.org/10.5281/zenodo.24159117)
+
+The [original v1 preprint](https://doi.org/10.5281/zenodo.24057440) and its
+[immutable code baseline](https://github.com/TarangKhanna/gdn-plus-soluble/tree/871536d6037326b5ddf222763a4c58d6e7e3f646)
+remain available. `ZENODO_RELEASE.json` and `ZENODO_SHA256SUMS` preserve that
+original archive's provenance.
 
 Code and repository documentation: MIT License. Paper: CC BY 4.0.

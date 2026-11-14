@@ -1,0 +1,72 @@
+Final structural coverage audit of Appendix D
+
+Scope: the defined deterministic materialized fixed-grid model. This is a proof
+coverage check, not a conclusion inferred from passing finite certificates.
+
+Case 1: fixed rational ordinary arithmetic and exact binary state primitives.
+Case 2: the deliberately rounded cyclic recurrent update.
+Case 3: the deliberately rounded first-position marker.
+Case 4: D- or L-scaled output coefficients times 1/D recurrent quantities.
+
+Operation introduced                         Coverage and reason
+Canonical embedding, payload lifting         Case 1: finite label indicators;
+                                            replicate fixed rational projection
+                                            columns and selector indices.
+Finite recoding / section / quotient         Case 1: unit-key overwrite supplies
+                                            exact one-hot and constant; finite
+                                            W1 selectors and W2=target-g.
+Q/K/V, query reads                          Cases 1/2/3: ordinary canonical maps,
+                                            plus tiny integer-numerator values
+                                            from the fixed constant coordinate;
+                                            active q selects a stored row.
+Materialized A=I-kk^T                       Case 1 for binary heads; case 2 with
+                                            m^2|D; case 3 with 36|D. Gates one.
+Recurrent state products/write              Exact binary overwrite/buffer (1),
+                                            counter maps (2), marker maps (3).
+Output projections                          Case 1 for binary memories; case 4
+                                            for amplified tiny recurrent reads.
+Centering and squared norm/variance          Case 1: fixed rational reached
+                                            carriers and individual products.
+Square root and normalization division      Root argument exactly one; root and
+                                            division exact. No epsilon/affine
+                                            normalization or dummy-only LN.
+Residual addition / FF sums                  Finite ordered exact additions;
+                                            bound every partial result after D.
+ReLU / argmax / coordinate selection         Exact comparisons/selections, not
+                                            new rounded scalar multiplication.
+Parity clock                                Existing complete cyclic-two block:
+                                            cases 1/2/3/4, unchanged primitive
+                                            forms, enlarged finite payload.
+Delay and first-position correction          Binary keys/query/value, companion
+                                            overwrite (1); marker readout (3/4).
+Per-x wreath copies                         Sequential canonical interfaces;
+                                            no cross-product of distinct
+                                            recurrent memories. Reuse cases.
+Common width / head / FF padding             Add zero coordinates/weights, unit
+                                            key with zero query/value for inert
+                                            heads; case 1. Never normalize a
+                                            dummy head independently.
+Variance padding                            Fix rational geometry first using
+                                            integer r and four-square identity;
+                                            case 1, no D-recursive denominator.
+
+Structural argument: each base component has a finite canonical input alphabet
+and proved finite memory invariant. Payload lifting enlarges those alphabets
+without altering the recurrent primitive maps. Finite controllers, sequential
+copies, delay and padding introduce only the operations listed above. Induction
+on the fixed finite composition therefore gives a finite set of rational
+ordinary operands/products plus the explicitly retained integer-numerator maps.
+Choose compatible D after this program and geometry, instantiate weights, then
+choose p to bound parameters and all pre-round results and ordered partial sums.
+
+No omitted scalar-operation class or new unproved arithmetic obligation was
+found. This is a mathematical coverage argument, not a machine-checked universal
+proof. It does not establish arbitrary grid changes, floating-point equivalence,
+perturbation margins, optimal depth, efficient size or StateBench identification.
+
+Pinpoint citations checked against cited PDF versions:
+Grazzi 2411.12537v4: Theorem 1 p5; Appendix A.4 p17.
+DeltaProduct 2502.10297v7: Theorems 1/2 p5; Appendix B.1/B.1.1 p19.
+Complex KDA 2609.24797v1: Theorems 3/5 pp6/7; Appendix B.4 pp28-29.
+Nowak 2606.01765v3: Appendix I, Theorem I.3 and Appendix J begin p24.
+Grazzi bibliography author order corrected to place Zela before Franke.

@@ -1,0 +1,164 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "arm": "unit",
+      "word": [
+        1,
+        1
+      ],
+      "materialized": {
+        "decoded": [
+          1,
+          2
+        ],
+        "absorbing_overflow": false,
+        "normalization_calls": 20,
+        "max_pre_round_numerator": "1524096"
+      },
+      "rank_one": {
+        "decoded": [
+          1,
+          1
+        ],
+        "absorbing_overflow": false,
+        "normalization_calls": 20,
+        "max_pre_round_numerator": "1524096"
+      },
+      "complete_output_differs": true
+    },
+    {
+      "arm": "unit",
+      "word": [
+        1,
+        2
+      ],
+      "materialized": {
+        "decoded": [
+          1,
+          0
+        ],
+        "absorbing_overflow": false,
+        "normalization_calls": 20,
+        "max_pre_round_numerator": "1524096"
+      },
+      "rank_one": {
+        "decoded": [
+          1,
+          2
+        ],
+        "absorbing_overflow": false,
+        "normalization_calls": 20,
+        "max_pre_round_numerator": "1524096"
+      },
+      "complete_output_differs": true
+    },
+    {
+      "arm": "unit",
+      "word": [
+        1,
+        0
+      ],
+      "materialized": {
+        "decoded": [
+          1,
+          1
+        ],
+        "absorbing_overflow": false,
+        "normalization_calls": 20,
+        "max_pre_round_numerator": "1524096"
+      },
+      "rank_one": {
+        "decoded": [
+          1,
+          0
+        ],
+        "absorbing_overflow": false,
+        "normalization_calls": 20,
+        "max_pre_round_numerator": "1524096"
+      },
+      "complete_output_differs": true
+    },
+    {
+      "arm": "variance",
+      "word": [
+        1,
+        1
+      ],
+      "materialized": {
+        "decoded": [
+          1,
+          2
+        ],
+        "absorbing_overflow": false,
+        "normalization_calls": 20,
+        "max_pre_round_numerator": "9144576"
+      },
+      "rank_one": {
+        "decoded": [
+          1,
+          1
+        ],
+        "absorbing_overflow": false,
+        "normalization_calls": 20,
+        "max_pre_round_numerator": "9144576"
+      },
+      "complete_output_differs": true
+    },
+    {
+      "arm": "variance",
+      "word": [
+        1,
+        2
+      ],
+      "materialized": {
+        "decoded": [
+          1,
+          0
+        ],
+        "absorbing_overflow": false,
+        "normalization_calls": 20,
+        "max_pre_round_numerator": "9144576"
+      },
+      "rank_one": {
+        "decoded": [
+          1,
+          2
+        ],
+        "absorbing_overflow": false,
+        "normalization_calls": 20,
+        "max_pre_round_numerator": "9144576"
+      },
+      "complete_output_differs": true
+    },
+    {
+      "arm": "variance",
+      "word": [
+        1,
+        0
+      ],
+      "materialized": {
+        "decoded": [
+          1,
+          1
+        ],
+        "absorbing_overflow": false,
+        "normalization_calls": 20,
+        "max_pre_round_numerator": "9144576"
+      },
+      "rank_one": {
+        "decoded": [
+          1,
+          0
+        ],
+        "absorbing_overflow": false,
+        "normalization_calls": 20,
+        "max_pre_round_numerator": "9144576"
+      },
+      "complete_output_differs": true
+    }
+  ],
+  "complete_network_runs": 12,
+  "reported_witness_reproduced": true,
+  "operation_order": "Decode complete networks with materialized and rounded rank-one updates.\n\nFor alpha=beta=1, rank-one evaluation computes d = k^T S first, then\nS'[i,j] = (S[i,j] - k[i]*d[j]) + k[i]*v[j]. Each multiplication rounds\nindividually; each sum is accumulated left to right with checked FP additions.\nSubtraction precedes the write addition. A = I - kk^T is never materialized.\nThis is distinct from task1_remaining_checks.fused (exact intermediates and a\nsingle output cast). Q/K/V, readout, normalization and FF remain unchanged.\n"
+}

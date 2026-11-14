@@ -1,0 +1,24 @@
+Final independent-review correction verification
+Parent candidate: ca2205e7b0d59c758c7a295f6db77c3897066c52
+Verified numerical implementation: b4c080f9115598af59d0e0543ee7fbb704283e08
+
+PASS manuscript source differs from parent in exactly two replacements:
+abstract sensitivity wording and Appendix C.3 bracketed Nowak citation.
+Theorem, proofs, assumptions, limitations and AI disclosure unchanged.
+No title-page version banner. No new experimental claim or DOI.
+PASS versioned primary-PDF pinpoint checks: CITATION_VERIFICATION.txt.
+PASS two-pass pdfLaTeX: 12 pages; zero warnings or overfull/underfull boxes.
+PASS extracted PDF shows [5, Appendix I, Theorem I.3].
+Visual inspection: final pages 1, 7, 8, 11, 12; equations, table, references,
+corrected citation and final pagination legible without clipping/overlap.
+Only pages 1 and 11 change extracted text versus parent; other pages unchanged.
+PASS entire bundled code ZIP byte-identical to git archive contents of b4c080f9115598af59d0e0543ee7fbb704283e08.
+PASS python3 -B certs/run_all.py from fresh code ZIP extraction: exit 0,
+7/7 entry points, 14.405s, Python 3.14.4, Darwin.
+Both seven-layer wreath arms: each 5104 states / 413424 transitions.
+Both Z3 arms: each 13 / 39. All 12 sensitivity runs and expected negative
+witness categories retained. No numerical Python code changed.
+PDF SHA256: 7ddbeece08b35095ce370246be9635131ec8a9f251229747d1440ec82503635e
+Original main and published tags untouched; no merge/tag/submission operation.
+Remaining publication blockers: none identified. Owner publication approval
+and actual DOI assignment remain pending; no new DOI has been invented.

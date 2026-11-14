@@ -1,0 +1,49 @@
+Version 2 - 10 November 2026
+Soluble State Tracking in Materialized Fixed-Point GDN+
+
+- Correct Appendix A.3: each W2 selector column writes the target carrier minus
+  the reached residual; show the subsequent residual addition explicitly.
+- Add the exact rounded rank-one evaluation order and all three verified
+  complete-output witnesses under both normalizations. Explain retained-state
+  cancellation and repeated marker initialization. Keep fused-exact and
+  ties-away intermediate-invariant witnesses separate.
+- Clarify Appendix D: fix the finite program and geometry, choose D, instantiate
+  grid-dependent weights, then choose p from all parameter/intermediate bounds.
+  Explain cancellation of D-dependent coefficients with 1/D states.
+- Qualify active recurrent storage and dense scalar-multiplication counts;
+  retain finite-depth composition without a sharp or optimal depth claim.
+- Tighten novelty and arithmetic-specific comparisons with StateBench, Grazzi,
+  Nowak, DeltaProduct, NFSM and Complex KDA. Add the latter two references.
+- Correct Zenodo/arXiv wording; pin the exact verified code commit and bundle its
+  unmodified export. State the tested macOS/Python 3.14.4 environment. Preserve
+  the original AI-assistance disclosure and explicitly retain author responsibility.
+- Keep version identification in release metadata rather than on the title page;
+  remove the forced appendix page break and retain natural pagination. Final
+  identified preprint is 12 pages; no artificial page-count constraint imposed.
+
+Theorem statement, model assumptions, formal theorem/lemma/proposition/proof
+blocks, Appendices A.1/A.2/B/C, and limitations are unchanged. Original v1 source, source package and PDF are preserved;
+no published branch or tag was rewritten. No scientific code was edited.
+
+Verified code commit: b4c080f9115598af59d0e0543ee7fbb704283e08
+Zenodo publication, merging and release-tag changes are not part of this revision.
+A separate publication-candidate branch push was authorized by the owner.
+
+Final candidate refinements after independent reviews:
+- Add the scoped arithmetic-sensitivity warning to a tighter abstract.
+- State the integer inner-product gap using Cauchy-Schwarz and integrality.
+- Print the repository URL, link the immutable verified code commit, and retain
+  the original Zenodo DOI without inventing a new version URL.
+- Add Appendix D structural coverage under payload lifting, recoding, clock,
+  delay, wreath composition and padding; full inventory in APPENDIX_D_COVERAGE.txt.
+- Correct Grazzi author order and add the existing Nowak classical KR anchor.
+- No further Python or numerical-code change was necessary.
+
+Final independent-review corrections (relative to ca2205e):
+- Abstract now reports only the tested rounded rank-one sensitivity; removed
+  the unsupported floating-point-failure wording. No new experiment claimed.
+- Appendix C.3 Nowak citation now renders with numerical brackets.
+- Rechecked all disputed pinpoint locations against versioned primary PDFs;
+  locations recorded in CITATION_VERIFICATION.txt. No numbering changes needed.
+- Rebuilt matching PDF/source ZIP and refreshed provenance/checksums.
+- Numerical implementation and original theorem/proofs/assumptions unchanged.
